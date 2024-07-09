@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapLogic Sizing Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        p {
+            text-align: center;
+            color: #555;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            background: #f7f7f7;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .info {
+            color: #007bff;
+            font-style: italic;
+            margin-top: 10px;
+        }
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #ddd;
+            border: 1px solid #ccc;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab.active {
+            background: #fff;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 0 5px 5px 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>SnapLogic Sizing Calculator</h1>
+
+    <div class="tabs">
+        <div class="tab active" onclick="openTab(event, 'tab1')">Triggered Task</div>
+        <div class="tab" onclick="openTab(event, 'tab2')">Ultra Task</div>
+        <div class="tab" onclick="openTab(event, 'tab3')">Scheduled Task</div>
+    </div>
+
+    <div id="tab1" class="tab-content active">
+        <p>This calculator helps in sizing for triggered tasks with the assumption of an average execution time of 1 second.</p>
+
+        <form id="calculator-form">
+            <label for="api-per-year">API per year</label>
+            <input type="number" id="api-per-year" value="300000000">
+
+            <label for="coverage-days">Coverage (days)</label>
+            <input type="number" id="coverage-days" value="30">
+
+            <label for="coverage-hours">Coverage (hours)</label>
+            <input type="number" id="coverage-hours" value="24">
+
+            <label for="peak">Peak (%)</label>
+            <input type="number" id="peak" value="150">
+
+            <button type="button" onclick="calculate()">Calculate</button>
+        </form>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <div id="tab2" class="tab-content">
+        <p>This calculator helps in sizing for ultra tasks with the assumption of an average execution time of 0.3 seconds.</p>
+
+        <form id="calculator-form-ultra">
+            <label for="api-per-year-ultra">API per year</label>
+            <input type="number" id="api-per-year-ultra" value="100000000">
+
+            <label for="coverage-days-ultra">Coverage (days)</label>
+            <input type="number" id="coverage-days-ultra" value="20">
+
+            <label for="coverage-hours-ultra">Coverage (hours)</label>
+            <input type="number" id="coverage-hours-ultra" value="12">
+
+            <label for="peak-ultra">Peak (%)</label>
+            <input type="number" id="peak-ultra" value="150">
+
+            <button type="button" onclick="calculateUltra()">Calculate</button>
+        </form>
+
+        <div class="result" id="result-ultra"></div>
+    </div>
+
+    <div id="tab3" class="tab-content">
+        <p>This calculator helps in sizing for scheduled tasks. Specific patterns and bulk load snaps can bring even greater performance, but this calculator provides a good average expectation.</p>
+
+        <form id="calculator-form-scheduled">
+            <label for="batch-size">Batch size (Gb)</label>
+            <input type="number" id="batch-size" value="30">
+
+            <label for="process-time">Process time (hours)</label>
+            <input type="number" id="process-time" value="12">
+
+            <button type="button" onclick="calculateScheduled()">Calculate</button>
+        </form>
+
+        <div class="result" id="result-scheduled"></div>
+    </div>
+
+    <script>
+        function openTab(event, tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function calculate() {
+            // Get input values
+            const apiPerYear = document.getElementById('api-per-year').value;
+            const coverageDays = document.getElementById('coverage-days').value;
+            const coverageHours = document.getElementById('coverage-hours').value;
+            const peak = document.getElementById('peak').value;
+
+            // Perform calculations
+            const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100);
+            const nodesRequired = concurrentAPI / 20;
+            const haNodesRequired = Math.ceil(Math.max(nodesRequired * 1.3, 2));
+
+            // Display results
+            let resultHTML = `
+                <h2>Results</h2>
+                <p>Concurrent API: ${concurrentAPI.toFixed(2)}</p>
+                <p>Nodes Required: ${nodesRequired.toFixed(2)}</p>
+                <p>HA Nodes Required: ${haNodesRequired.toFixed(2)}</p>
+            `;
+
+            if (haNodesRequired > 6) {
+                resultHTML += `
+                    <p class="info">
+                        Consider looking into <a href="https://www.snaplogic.com/resources/data-sheets/snaplogic-ultra-pipelines" target="_blank">SnapLogic Ultra Pipeline</a> for better performance.
+                    </p>
+                `;
+            }
+
+            document.getElementById('result').innerHTML = resultHTML;
+        }
+
+        function calculateUltra() {
+            // Get input values
+            const apiPerYear = document.getElementById('api-per-year-ultra').value;
+            const coverageDays = document.getElementById('coverage-days-ultra').value;
+            const coverageHours = document.getElementById('coverage-hours-ultra').value;
+            const peak = document.getElementById('peak-ultra').value;
+
+            // Perform calculations
+            const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100) / 0.3;
+            const nodesRequired = concurrentAPI / 200;
+            const haNodesRequired = Math.max(Math.ceil(nodesRequired * 1.3), 2);
+            const fmNodesRequired = concurrentAPI / 400;
+            const haFmNodesRequired = Math.max(Math.ceil(fmNodesRequired * 1.3), 2);
+
+            // Display results
+            document.getElementById('result-ultra').innerHTML = `
+                <h2>Results</h2>
+                <p>API per second: ${concurrentAPI.toFixed(2)}</p>
+                <p>Execution Nodes Required: ${nodesRequired.toFixed(2)}</p>
+                <p>FeedMaster Nodes Required: ${fmNodesRequired.toFixed(2)}</p>
+                <p>HA Execution Nodes Required: ${haNodesRequired.toFixed(2)}</p>
+                <p>HA FeedMaster Nodes Required: ${haFmNodesRequired.toFixed(2)}</p>
+            `;
+        }
+
+        function calculateScheduled() {
+            // Get input values
+            const batchSize = document.getElementById('batch-size').value;
+            const processTime = document.getElementById('process-time').value;
+
+            // Perform calculations
+            const mbPerMinute = (batchSize * 1024) / (processTime * 60);
+            const nodesRequired = mbPerMinute / 300;
+            const haNodesRequired = Math.ceil(Math.max(nodesRequired * 1.3, 2));
+
+            // Display results
+            document.getElementById('result-scheduled').innerHTML = `
+                <h2>Results</h2>
+                <p>Mb per minute: ${mbPerMinute.toFixed(2)}</p>
+                <p>Nodes Required: ${nodesRequired.toFixed(2)}</p>
+                <p>HA Nodes Required: ${haNodesRequired.toFixed(2)}</p>
+            `;
+        }
+    </script>
+
+</body>
+</html>
