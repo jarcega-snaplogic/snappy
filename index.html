@@ -25,7 +25,7 @@
             margin: 10px 0 5px;
             font-weight: bold;
         }
-        input {
+        input[type="number"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -82,6 +82,51 @@
             border: 1px solid #ccc;
             padding: 20px;
             border-radius: 0 5px 5px 5px;
+        }
+        .toggle-container {
+            display: flex;
+            align-items: center;
+        }
+        .toggle-label {
+            margin-right: 10px;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #007bff;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
         }
     </style>
 </head>
@@ -141,10 +186,15 @@
 
     <div id="tab3" class="tab-content">
         <p>This calculator helps in sizing for scheduled tasks. Specific patterns and bulk load snaps can bring even greater performance, but this calculator provides a good average expectation.</p>
-
-        <form id="calculator-form-scheduled">
-            <label for="batch-size">Batch size (Gb)</label>
-            <input type="number" id="batch-size" value="30">
+		<form id="calculator-form-scheduled">
+            <div class="toggle-container">
+                <label for="batch-size" id="batch-size-label" class="toggle-label">Batch size (Gb)</label>
+                <input type="number" id="batch-size" value="300">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="toggle-switch" onclick="toggleBatchMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
 
             <label for="process-time">Process time (hours)</label>
             <input type="number" id="process-time" value="12">
@@ -156,6 +206,8 @@
     </div>
 
     <script>
+        let isBatchSize = true;
+
         function openTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab');
             const contents = document.querySelectorAll('.tab-content');
@@ -223,10 +275,32 @@
             `;
         }
 
+        function toggleBatchMode() {
+            const label = document.getElementById('batch-size-label');
+            const input = document.getElementById('batch-size');
+
+            if (isBatchSize) {
+                label.textContent = 'Batch volume (Rows)';
+                input.value = 1500000000; // Default value for rows
+                isBatchSize = false;
+            } else {
+                label.textContent = 'Batch size (Gb)';
+                input.value = 30; // Default value for Gb
+                isBatchSize = true;
+            }
+        }
+
         function calculateScheduled() {
             // Get input values
-            const batchSize = document.getElementById('batch-size').value;
+            const batchSizeInput = document.getElementById('batch-size').value;
             const processTime = document.getElementById('process-time').value;
+            let batchSize;
+
+            if (isBatchSize) {
+                batchSize = batchSizeInput; // In Gb
+            } else {
+                batchSize = batchSizeInput * 2000 / 10000000000; // Convert rows to Gb
+            }
 
             // Perform calculations
             const mbPerMinute = (batchSize * 1024) / (processTime * 60);
