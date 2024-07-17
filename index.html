@@ -26,13 +26,45 @@
             margin: 10px 0 5px;
             font-weight: bold;
         }
-        input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+        input[type="number"], select {
+			width: 100%;
+			padding: 10px;
+			margin-bottom: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			background-color: #fff;
+			appearance: none;
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="none" stroke="black" stroke-width="2" d="M2 7 L12 17 L22 7 Z"/></svg>');
+			background-repeat: no-repeat;
+			background-position: right 10px center;
+			background-size: 10px 10px;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+		select:focus {
+			border-color: #0056b3;
+			box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+			outline: none;
+		}
+
+		select option {
+			height: 38px; /* Assuming the select field height is around 38px */
+			padding: 10px;
+			background-color: #fff;
+			color: #333;
+			display: flex;
+			align-items: center;
+		}
+
+		select option:hover {
+			background-color: #f4f4f9;
+			color: #0056b3;
+		}
+
+
         button {
             width: 100%;
             padding: 10px;
@@ -151,11 +183,54 @@
         }
         .logo img {
             width: 200px;
+            cursor: pointer;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 5px;
+            z-index: 1000;
+        }
+        .popup input[type="password"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .popup button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .popup button:hover {
+            background-color: #003d80;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
         }
     </style>
 </head>
 <body>
-    <div class="logo">
+    <div class="logo" onclick="showPopup()">
         <img src="https://www.snaplogic.com/wp-content/uploads/2022/09/SL_logo_blue_web.png" alt="SnapLogic Logo">
     </div>
 
@@ -173,14 +248,17 @@
         <p>This calculator helps in sizing for triggered tasks with the assumption of an average execution time of 1 second.</p>
 
         <form id="calculator-form">
-            <label for="api-per-year">API per year</label>
+            <label for="api-per-year">API requests per year</label>
             <input type="number" id="api-per-year" value="300000000">
 
-            <label for="coverage-days">Coverage (days)</label>
+            <label for="coverage-days">API Usage Days per Month</label>
             <input type="number" id="coverage-days" value="30">
 
-            <label for="coverage-hours">Coverage (hours)</label>
+            <label for="coverage-hours">API Usage Hours per Day</label>
             <input type="number" id="coverage-hours" value="24">
+
+            <label for="api-response-time" id="api-response-time-label" style="display: none;">API Response Time (seconds)</label>
+            <input type="number" id="api-response-time" value="1" style="display: none;">
 
             <label for="peak">Peak (%)</label>
             <input type="number" id="peak" value="150">
@@ -195,14 +273,17 @@
         <p>This calculator helps in sizing for ultra tasks with the assumption of an average execution time of 0.3 seconds.</p>
 
         <form id="calculator-form-ultra">
-            <label for="api-per-year-ultra">API per year</label>
+            <label for="api-per-year-ultra">API requests per year</label>
             <input type="number" id="api-per-year-ultra" value="100000000">
 
-            <label for="coverage-days-ultra">Coverage (days)</label>
+            <label for="coverage-days-ultra">API Usage Days per Month</label>
             <input type="number" id="coverage-days-ultra" value="20">
 
-            <label for="coverage-hours-ultra">Coverage (hours)</label>
+            <label for="coverage-hours-ultra">API Usage Hours per Day</label>
             <input type="number" id="coverage-hours-ultra" value="12">
+
+            <label for="api-response-time-ultra" id="api-response-time-label-ultra" style="display: none;">API Response Time (seconds)</label>
+            <input type="number" id="api-response-time-ultra" value="0.3" style="display: none;">
 
             <label for="peak-ultra">Peak (%)</label>
             <input type="number" id="peak-ultra" value="150">
@@ -226,14 +307,29 @@
                 </label>
             </div>
 
-            <label for="process-time">Process time (hours)</label>
+            <label for="process-time">Available Batch Window (hours)</label>
             <input type="number" id="process-time" value="12">
+
+            <label for="complexity-multiplier" id="complexity-multiplier-label" style="display: none;">Transformation Complexity</label>
+			<select id="complexity-multiplier" style="display: none;">
+				<option value="1" selected>straight pass through</option>
+				<option value="1.25">few sorts/aggregations</option>
+				<option value="1.5">moderate sorts/aggregations</option>
+				<option value="2">many sorts/aggregations</option>
+			</select>
 
             <button type="button" onclick="calculateScheduled()">Calculate</button>
         </form>
 
         <div class="result" id="result-scheduled"></div>
     </div>
+
+    <div class="popup" id="popup">
+        <h2>Enter Password</h2>
+        <input type="password" id="password" placeholder="Password">
+        <button type="button" onclick="checkPassword()">Submit</button>
+    </div>
+    <div class="overlay" id="overlay" onclick="hidePopup()"></div>
 
     <script>
         let isBatchSize = true;
@@ -255,10 +351,11 @@
             const coverageDays = document.getElementById('coverage-days').value;
             const coverageHours = document.getElementById('coverage-hours').value;
             const peak = document.getElementById('peak').value;
+            const apiExecutionTime = document.getElementById('api-response-time').value;
 
             // Perform calculations
             const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100);
-            const nodesRequired = concurrentAPI / 20;
+            const nodesRequired = concurrentAPI / (20 / apiExecutionTime);
             const haNodesRequired = Math.ceil(Math.max(nodesRequired * 1.3, 2));
 
             // Display results
@@ -286,12 +383,13 @@
             const coverageDays = document.getElementById('coverage-days-ultra').value;
             const coverageHours = document.getElementById('coverage-hours-ultra').value;
             const peak = document.getElementById('peak-ultra').value;
+            const apiExecutionTime = document.getElementById('api-response-time-ultra').value;
 
             // Perform calculations
-            const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100) / 0.3;
-            const nodesRequired = concurrentAPI / 200;
+            const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100);
+            const nodesRequired = concurrentAPI / (200 / apiExecutionTime);
             const haNodesRequired = Math.max(Math.ceil(nodesRequired * 1.3), 2);
-            const fmNodesRequired = concurrentAPI / 400;
+            const fmNodesRequired = concurrentAPI / (400 / apiExecutionTime);
             const haFmNodesRequired = Math.max(Math.ceil(fmNodesRequired * 1.3), 2);
 
             // Display results
@@ -324,6 +422,7 @@
             // Get input values
             const batchSizeInput = document.getElementById('batch-size').value;
             const processTime = document.getElementById('process-time').value;
+            const complexityMultiplier = document.getElementById('complexity-multiplier').value;
             let batchSize;
 
             if (isBatchSize) {
@@ -334,7 +433,7 @@
 
             // Perform calculations
             const mbPerMinute = (batchSize * 1024) / (processTime * 60);
-            const nodesRequired = mbPerMinute / 300;
+            const nodesRequired = mbPerMinute * complexityMultiplier / 300;
             const haNodesRequired = Math.ceil(Math.max(nodesRequired * 1.3, 2));
 
             // Display results
@@ -344,6 +443,31 @@
                 <p>Nodes Required: ${nodesRequired.toFixed(2)}</p>
                 <p>HA Nodes Required: ${haNodesRequired.toFixed(2)}</p>
             `;
+        }
+
+        function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function hidePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('password').value;
+            if (password === 'snapLogic4snapLogic') {
+                document.getElementById('api-response-time-label').style.display = 'block';
+                document.getElementById('api-response-time').style.display = 'block';
+                document.getElementById('api-response-time-label-ultra').style.display = 'block';
+                document.getElementById('api-response-time-ultra').style.display = 'block';
+                document.getElementById('complexity-multiplier-label').style.display = 'block';
+                document.getElementById('complexity-multiplier').style.display = 'block';
+                hidePopup();
+            } else {
+                alert('Incorrect password. Please try again.');
+            }
         }
     </script>
     <footer>
