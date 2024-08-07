@@ -387,7 +387,7 @@
 
             // Perform calculations
             const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100);
-            const nodesRequired = concurrentAPI / (200 / apiExecutionTime);
+            const nodesRequired = concurrentAPI / (100 / apiExecutionTime);
             const haNodesRequired = Math.max(Math.ceil(nodesRequired * 1.3), 2);
             const fmNodesRequired = concurrentAPI / (400 / apiExecutionTime);
             const haFmNodesRequired = Math.max(Math.ceil(fmNodesRequired * 1.3), 2);
