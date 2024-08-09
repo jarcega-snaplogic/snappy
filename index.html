@@ -242,13 +242,14 @@
         <div class="tab active" onclick="openTab(event, 'tab1')">Triggered Task</div>
         <div class="tab" onclick="openTab(event, 'tab2')">Ultra Task</div>
         <div class="tab" onclick="openTab(event, 'tab3')">Scheduled Task</div>
+        <div class="tab" onclick="openTab(event, 'tab4')">Headless Ultra Task</div>
     </div>
 
     <div id="tab1" class="tab-content active">
         <p>This calculator helps in sizing for triggered tasks with the assumption of an average execution time of 1 second.</p>
 
         <form id="calculator-form">
-            <label for="api-per-year">API requests per year</label>
+            <label for="api-per-year">API requests per Year</label>
             <input type="number" id="api-per-year" value="300000000">
 
             <label for="coverage-days">API Usage Days per Month</label>
@@ -273,7 +274,7 @@
         <p>This calculator helps in sizing for ultra tasks with the assumption of an average execution time of 0.3 seconds.</p>
 
         <form id="calculator-form-ultra">
-            <label for="api-per-year-ultra">API requests per year</label>
+            <label for="api-per-year-ultra">API requests per Year</label>
             <input type="number" id="api-per-year-ultra" value="100000000">
 
             <label for="coverage-days-ultra">API Usage Days per Month</label>
@@ -323,6 +324,39 @@
 
         <div class="result" id="result-scheduled"></div>
     </div>
+	
+	    <div id="tab4" class="tab-content">
+        <p>This calculator helps in sizing for headless ultra tasks with the assumption of an average execution time of 0.3 second. When the Microbatching option is enabled, it uses data size to calculate the node required instead.</p>
+
+        <form id="calculator-form">
+            <label for="event-per-day">Event per Day</label>
+            <input type="number" id="event-per-day" value="20000000">
+						
+            <div class="toggle-container">
+                <label for="event-toggle-switch" class="toggle-label">Use Microbatching (recommended for datawarehousing)</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="event-toggle-switch" onclick="toggleMicrobatchingMode()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <label for="coverage-hours-event">Event Usage Hours per Day</label>
+            <input type="number" id="coverage-hours-event" value="24">
+
+            <label for="event-response-time" id="event-response-time-label" style="display: none;">Event Response Time (seconds)</label>
+            <input type="number" id="event-response-time" value="0.3" style="display: none;">
+			
+            <label for="event-response-time" id="event-size-label" style="display: none;">Message Size (Bytes)</label>
+            <input type="number" id="event-size" value="2000" style="display: none;">
+
+            <label for="peak-event" id="peak-event-label">Peak (%)</label>
+            <input type="number" id="peak-event" value="150">
+
+            <button type="button" onclick="calculateHeadlessUltra()">Calculate</button>
+        </form>
+
+        <div class="result" id="result-headless-ultra"></div>
+    </div>
 
     <div class="popup" id="popup">
         <h2>Enter Password</h2>
@@ -333,6 +367,8 @@
 
     <script>
         let isBatchSize = true;
+        let isMicrobatching = true;
+        let pLocked = true;
 
         function openTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab');
@@ -389,7 +425,7 @@
             const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100);
             const nodesRequired = concurrentAPI / (100 / apiExecutionTime);
             const haNodesRequired = Math.max(Math.ceil(nodesRequired * 1.3), 2);
-            const fmNodesRequired = concurrentAPI / (400 / apiExecutionTime);
+            const fmNodesRequired = concurrentAPI / (200 / apiExecutionTime);
             const haFmNodesRequired = Math.max(Math.ceil(fmNodesRequired * 1.3), 2);
 
             // Display results
@@ -403,6 +439,51 @@
             `;
         }
 
+        function calculateHeadlessUltra() {
+						
+            // Get input values
+            const eventPerDay = document.getElementById('event-per-day').value;
+            const coverageHours = document.getElementById('coverage-hours-event').value;
+            const peak = document.getElementById('peak-event').value;
+            const eventExecutionTime = document.getElementById('event-response-time').value;
+            const eventSize = document.getElementById('event-size').value;
+			// Hard coded for now
+			const complexityMultiplier = 1;
+			
+            if (isMicrobatching) {
+				// Perform calculations
+				const concurrentEvent = eventPerDay / coverageHours / 60 / 60 * (peak / 100);
+				const nodesRequired = concurrentEvent / (100 / eventExecutionTime);
+				const haNodesRequired = Math.max(Math.ceil(nodesRequired * 1.3), 2);
+				
+				// Display results
+				document.getElementById('result-headless-ultra').innerHTML = `
+					<h2>Results</h2>
+					<p>Event per second: ${concurrentEvent.toFixed(2)}</p>
+					<p>Execution Nodes Required: ${nodesRequired.toFixed(2)}</p>
+					<p>HA Execution Nodes Required: ${haNodesRequired.toFixed(2)}</p>
+				`;
+				}
+			else{
+                batchSize = (eventSize * eventPerDay) / 10000000000; // Convert events to Gb
+
+				// Perform calculations
+				const concurrentEvent = eventPerDay / coverageHours / 60 * (peak / 100);
+				const mbPerMinute = ((batchSize * 1024) / (coverageHours * 60)) * (peak / 100);
+				const nodesRequired = mbPerMinute * complexityMultiplier / 150; //Half the throughput of scheduled tasks, finger in the air metric
+				const haNodesRequired = Math.ceil(Math.max(nodesRequired * 1.3, 2));
+				
+				// Display results
+				document.getElementById('result-headless-ultra').innerHTML = `
+					<h2>Results</h2>
+					<p>Event per minute: ${concurrentEvent.toFixed(2)}</p>
+					<p>Mb per minute: ${mbPerMinute.toFixed(2)}</p>
+					<p>Execution Nodes Required: ${nodesRequired.toFixed(2)}</p>
+					<p>HA Execution Nodes Required: ${haNodesRequired.toFixed(2)}</p>
+				`;
+				}
+			}
+
         function toggleBatchMode() {
             const label = document.getElementById('batch-size-label');
             const input = document.getElementById('batch-size');
@@ -412,9 +493,33 @@
                 input.value = 1500000000; // Default value for rows
                 isBatchSize = false;
             } else {
-                label.textContent = 'Batch size (Gb)';
-                input.value = 300; // Default value for Gb
+                label.textContent = 'Batch size (GB)';
+                input.value = 300; // Default value for GB
                 isBatchSize = true;
+            }
+        }
+
+        function toggleMicrobatchingMode() {	
+            if (isMicrobatching) {
+                isMicrobatching = false;
+				//document.getElementById('peak-event-label').style.display = 'none';
+				//document.getElementById('peak-event').style.display = 'none';
+				if (!pLocked){		
+					document.getElementById('event-size-label').style.display = 'block';
+					document.getElementById('event-size').style.display = 'block';	
+					document.getElementById('event-response-time-label').style.display = 'none';
+					document.getElementById('event-response-time').style.display = 'none';
+				}
+            } else {
+				isMicrobatching = true;
+				//document.getElementById('peak-event-label').style.display = 'block';
+				//document.getElementById('peak-event').style.display = 'block';
+				if (!pLocked){
+					document.getElementById('event-response-time-label').style.display = 'block';
+					document.getElementById('event-response-time').style.display = 'block';
+					document.getElementById('event-size-label').style.display = 'none';
+					document.getElementById('event-size').style.display = 'none';		
+				}
             }
         }
 
@@ -464,6 +569,15 @@
                 document.getElementById('api-response-time-ultra').style.display = 'block';
                 document.getElementById('complexity-multiplier-label').style.display = 'block';
                 document.getElementById('complexity-multiplier').style.display = 'block';
+				if (isMicrobatching){
+					document.getElementById('event-response-time-label').style.display = 'block';
+					document.getElementById('event-response-time').style.display = 'block';
+				}
+				else{
+					document.getElementById('event-size-label').style.display = 'block';
+					document.getElementById('event-size').style.display = 'block';
+				}
+				pLocked = false;
                 hidePopup();
             } else {
                 alert('Incorrect password. Please try again.');
