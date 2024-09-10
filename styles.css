@@ -1,0 +1,398 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+.main-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    transition: max-width 0.3s ease;
+}
+
+body.diagram-tab-active .main-container {
+    max-width: none;
+    width: 100%;
+    padding: 0;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #0056b3;
+}
+
+p {
+    text-align: center;
+    color: #555;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+input[type="number"], select {
+    width: calc(100% - 22px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="none" stroke="black" stroke-width="2" d="M2 7 L12 17 L22 7 Z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 10px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+select:focus {
+    border-color: #0056b3;
+    box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
+    outline: none;
+}
+
+select option {
+    height: 38px;
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+select option:hover {
+    background-color: #f4f4f9;
+    color: #0056b3;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #003d80;
+}
+
+.result {
+    background: #f7f7f7;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.info {
+    color: #0056b3;
+    font-style: italic;
+    margin-top: 10px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    background: #ddd;
+    border: 1px solid #ccc;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+}
+
+.tab.active {
+    background: #fff;
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 0 5px 5px 5px;
+}
+
+#tab5 {
+    width: 100%;
+    padding: 0;
+}
+
+.diagramator-container {
+    display: flex;
+    height: 600px; /* Adjust as needed */
+}
+
+.json-input-panel {
+    width: 500px;
+    padding: 20px;
+    background-color: #f4f4f9;
+    border-right: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+}
+
+#monaco-editor {
+    width: 100%;
+    height: calc(100% - 100px);
+    margin-bottom: 10px;
+}
+
+#json-input {
+    width: 100%;
+    height: calc(100% - 50px);
+    margin-bottom: 10px;
+    font-family: monospace;
+    resize: none;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: scroll;
+    line-height: 1.5;
+    padding: 5px;
+    font-size: 14px;
+    -webkit-text-fill-color: inherit;
+    -webkit-box-shadow: 0 0 0px 1000px white inset;
+    transition: none;
+    spellcheck: false;
+    -webkit-spellcheck: false;
+}
+
+.json-input-panel button,
+    #generate-diagram-container button {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #0056b3;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+.json-input-panel button:hover,
+    #generate-diagram-container button:hover {
+        background-color: #003d80;
+    }
+
+    .json-input-panel button:disabled,
+    #generate-diagram-container button:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
+
+.diagram-output {
+    flex-grow: 1;
+    height: 100%;
+    overflow: hidden;
+}
+#diagram-container {
+    width: 100%;
+    height: 100%;
+}
+
+#diagram {
+    width: 100%;
+    height: 100%;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #777;
+}
+
+footer a {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+.logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    width: 200px;
+    cursor: pointer;
+}
+
+/* Popup */
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    width: 300px; /* Set a fixed width for the popup */
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+popup h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #0056b3;
+}
+
+.popup input {
+    width: calc(100% - 20px); /* Adjust width to account for padding */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.popup button {
+    width: 100%;
+    padding: 10px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.popup button:hover {
+    background-color: #003d80;
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.faq-question {
+    cursor: pointer;
+    padding: 15px 20px;
+    background-color: #f7f7f7;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.faq-question:hover {
+    background-color: #e0e0e0;
+}
+
+.faq-icon {
+    font-size: 12px;
+    transition: transform 0.3s ease;
+}
+
+.faq-answer {
+    display: none;
+    padding: 15px 20px;
+    background-color: #fff;
+    border-top: 1px solid #e0e0e0;
+    line-height: 1.6;
+}
+
+.faq-item.active .faq-question {
+    background-color: #0056b3;
+    color: #fff;
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(180deg);
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+.toggle-label {
+    margin-right: 10px;
+}
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 24px;
+}
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+input:checked + .slider {
+    background-color: #0056b3;
+}
+input:checked + .slider:before {
+    transform: translateX(26px);
+}

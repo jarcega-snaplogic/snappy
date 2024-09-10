@@ -4,232 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SnapLogic Sizing Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        h1, h2 {
-            text-align: center;
-            color: #0056b3;
-        }
-        p {
-            text-align: center;
-            color: #555;
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-weight: bold;
-        }
-        input[type="number"], select {
-          		width: calc(100% - 22px);
-			padding: 10px;
-			margin-bottom: 10px;
-			border: 1px solid #ccc;
-			border-radius: 5px;
-			background-color: #fff;
-			appearance: none;
-			-webkit-appearance: none;
-			-moz-appearance: none;
-			background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"><path fill="none" stroke="black" stroke-width="2" d="M2 7 L12 17 L22 7 Z"/></svg>');
-			background-repeat: no-repeat;
-			background-position: right 10px center;
-			background-size: 10px 10px;
-			font-size: 16px;
-			cursor: pointer;
-		}
-
-		select:focus {
-			border-color: #0056b3;
-			box-shadow: 0 0 5px rgba(0, 86, 179, 0.5);
-			outline: none;
-		}
-
-		select option {
-			height: 38px; /* Assuming the select field height is around 38px */
-			padding: 10px;
-			background-color: #fff;
-			color: #333;
-			display: flex;
-			align-items: center;
-		}
-
-		select option:hover {
-			background-color: #f4f4f9;
-			color: #0056b3;
-		}
-
-
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #003d80;
-        }
-        .result {
-            background: #f7f7f7;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-        .info {
-            color: #0056b3;
-            font-style: italic;
-            margin-top: 10px;
-        }
-        .tabs {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            background: #ddd;
-            border: 1px solid #ccc;
-            border-bottom: none;
-            border-radius: 5px 5px 0 0;
-        }
-        .tab.active {
-            background: #fff;
-            font-weight: bold;
-            color: #0056b3;
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-            background: #fff;
-            border: 1px solid #ccc;
-            padding: 20px;
-            border-radius: 0 5px 5px 5px;
-        }
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .toggle-label {
-            margin-right: 10px;
-        }
-        .toggle-switch {
-            position: relative;
-            width: 50px;
-            height: 24px;
-        }
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: #0056b3;
-        }
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #777;
-        }
-        footer a {
-            color: #0056b3;
-            text-decoration: none;
-        }
-        footer a:hover {
-            text-decoration: underline;
-        }
-        .logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .logo img {
-            width: 200px;
-            cursor: pointer;
-        }
-        .popup {
-            display: none;
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-radius: 5px;
-            z-index: 1000;
-        }
-        .popup input[type="password"] {
-            width: calc(100% - 22px);
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .popup button {
-            width: 100%;
-            padding: 10px;
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .popup button:hover {
-            background-color: #003d80;
-        }
-        .overlay {
-            display: none;
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monacoEditor/9.9.2/monacoEditor.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/monacoEditor/9.9.2/monacoEditor.min.css" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsonlint/1.6.0/jsonlint.min.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@excalidraw/excalidraw@0.15.2/dist/excalidraw.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs/loader.min.js"></script>
+	<link rel="stylesheet" href="styles.css">
+    
 </head>
 <body>
+    <div class="main-container">
     <div class="logo" onclick="showPopup()">
         <img src="https://www.snaplogic.com/wp-content/uploads/2022/09/SL_logo_blue_web.png" alt="SnapLogic Logo">
     </div>
@@ -239,11 +26,13 @@
     The formulas are based on the <a href="https://community.snaplogic.com/t5/sigma-framework-library/snaplex-capacity-tuning-guide/td-p/23787" target="_blank">Sigma Framework Capacity Guide</a>.</p>
 
     <div class="tabs">
-        <div class="tab active" onclick="openTab(event, 'tab1')">Triggered Task</div>
-        <div class="tab" onclick="openTab(event, 'tab2')">Ultra Task</div>
-        <div class="tab" onclick="openTab(event, 'tab3')">Scheduled Task</div>
-        <div class="tab" onclick="openTab(event, 'tab4')">Headless Ultra Task</div>
-    </div>
+    <div class="tab active" onclick="openTab(event, 'tab1')">Triggered Task</div>
+    <div class="tab" onclick="openTab(event, 'tab2')">Ultra Task</div>
+    <div class="tab" onclick="openTab(event, 'tab3')">Scheduled Task</div>
+    <div class="tab" onclick="openTab(event, 'tab4')">Headless Ultra Task</div>
+    <div class="tab" onclick="openTab(event, 'tab5')">Diagram</div>
+    <div class="tab" onclick="openTab(event, 'tab6')">FAQ</div>
+</div>
 
     <div id="tab1" class="tab-content active">
         <p>This calculator helps in sizing for triggered tasks with the assumption of an average execution time of 1 second.</p>
@@ -324,40 +113,154 @@
 
         <div class="result" id="result-scheduled"></div>
     </div>
-	
-	    <div id="tab4" class="tab-content">
-        <p>This calculator helps in sizing for headless ultra tasks with the assumption of an average execution time of 0.3 second. When the Microbatching option is enabled, it uses data size to calculate the node required instead.</p>
 
-        <form id="calculator-form">
-            <label for="event-per-day">Event per Day</label>
-            <input type="number" id="event-per-day" value="20000000">
-						
-            <div class="toggle-container">
-                <label for="event-toggle-switch" class="toggle-label">Use Microbatching (recommended for datawarehousing)</label>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="event-toggle-switch" onclick="toggleMicrobatchingMode()">
-                    <span class="slider"></span>
-                </label>
-            </div>
+    <div id="tab4" class="tab-content">
+    <p>This calculator helps in sizing for headless ultra tasks with the assumption of an average execution time of 0.3 second. When the Microbatching option is enabled, it uses data size to calculate the node required instead.</p>
 
-            <label for="coverage-hours-event">Event Usage Hours per Day</label>
-            <input type="number" id="coverage-hours-event" value="24">
+    <form id="calculator-form">
+        <label for="event-per-day">Event per Day</label>
+        <input type="number" id="event-per-day" value="20000000">
+                    
+        <div class="toggle-container">
+            <label for="event-toggle-switch" class="toggle-label">Use Microbatching (recommended for datawarehousing)</label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="event-toggle-switch" onclick="toggleMicrobatchingMode()">
+                <span class="slider"></span>
+            </label>
+        </div>
 
-            <label for="event-response-time" id="event-response-time-label" style="display: none;">Event Response Time (seconds)</label>
-            <input type="number" id="event-response-time" value="0.3" style="display: none;">
-			
-            <label for="event-response-time" id="event-size-label" style="display: none;">Message Size (Bytes)</label>
-            <input type="number" id="event-size" value="2000" style="display: none;">
+        <label for="coverage-hours-event">Event Usage Hours per Day</label>
+        <input type="number" id="coverage-hours-event" value="24">
 
-            <label for="peak-event" id="peak-event-label">Peak (%)</label>
-            <input type="number" id="peak-event" value="150">
+        <label for="event-response-time" id="event-response-time-label" style="display: none;">Event Response Time (seconds)</label>
+        <input type="number" id="event-response-time" value="0.3" style="display: none;">
+        
+        <label for="event-response-time" id="event-size-label" style="display: none;">Message Size (Bytes)</label>
+        <input type="number" id="event-size" value="2000" style="display: none;">
 
-            <button type="button" onclick="calculateHeadlessUltra()">Calculate</button>
-        </form>
+        <label for="peak-event" id="peak-event-label">Peak (%)</label>
+        <input type="number" id="peak-event" value="150">
 
-        <div class="result" id="result-headless-ultra"></div>
+        <button type="button" onclick="calculateHeadlessUltra()">Calculate</button>
+    </form>
+
+    <div class="result" id="result-headless-ultra"></div>
     </div>
-
+    <div id="tab5" class="tab-content">
+        <div class="diagramator-container">
+            <div class="json-input-panel">
+                <div id="monaco-editor" style="width: 100%; height: calc(100% - 100px);"></div>
+                <button id="generateJsonBtn" onclick="generateDiagramJson()">Generate JSON</button>
+                <div id="generate-diagram-container"></div>
+            </div>
+            <div class="diagram-output">
+                <div id="diagram-container">
+            </div>
+            </div>
+        </div>
+    </div>
+    <div id="tab6" class="tab-content">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">What are the nodes?</div>
+            <div class="faq-answer">
+                Nodes in SnapLogic are the computational units that execute integration tasks. They are responsible for running Snaplex instances, which process and route data according to the defined integration pipelines.
+                <br><br>
+                These nodes form the backbone of SnapLogic's distributed processing architecture, allowing for scalable and efficient data integration across various sources and destinations.
+                </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">What are feedmaster nodes?</div>
+            <div class="faq-answer">
+                Feedmaster nodes are specialized nodes in SnapLogic that play a crucial role in managing and coordinating the overall system. They have several key responsibilities:
+                <ul>
+                    <li>Task Distribution: They manage and coordinate the distribution of tasks across execution nodes.</li>
+                    <li>Load Balancing: Ensure efficient utilization of resources within a SnapLogic deployment.</li>
+                    <li>Health Monitoring: Continuously monitor the health and status of other nodes in the cluster.</li>
+                    <li>Failover Handling: Manage failover scenarios to maintain high availability of the system.</li>
+                    <li>Cluster Management: Act as the central point of control for the SnapLogic cluster.</li>
+                </ul>
+                Feedmaster nodes are essential for maintaining the reliability and performance of a SnapLogic deployment, especially in large-scale or mission-critical environments.
+                </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">Are there different sizes for nodes? Which are the available sizes?</div>
+            <div class="faq-answer">
+                Yes, SnapLogic offers different node sizes to accommodate varying workload requirements. The available sizes are:
+                <ul>
+                    <li>Medium</li>
+                    <li>Large</li>
+                    <li>Extra-Large (XL)</li>
+                    <li>Extra-Extra-Large (XXL)</li>
+                </ul>
+                The exact specifications for each size may vary depending on the deployment environment (cloud provider or on-premises) and can be customized based on specific needs. These different sizes allow organizations to optimize their SnapLogic deployment for different types of workloads, balancing performance and cost considerations.
+                </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">Will the node sizing calculator recommend different node sizes?</div>
+            <div class="faq-answer">
+                The current version of this calculator provides estimates for the number of medium-sized nodes required. It does not recommend specific node sizes or a mix of different sizes. The estimates are based on general assumptions and are intended for initial planning purposes.
+                <br><br>
+                For detailed recommendations on node sizes or a mix of different node sizes, it's best to consult with a SnapLogic representative. They can take into account your specific use case, performance requirements, data volumes, and integration complexity to provide a more tailored sizing recommendation. This may include suggestions for using different node sizes or specialized configurations to optimize your SnapLogic deployment.
+                </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">What are memory optimized nodes?</div>
+            <div class="faq-answer">
+                Memory optimized nodes are specialized node configurations that have a higher ratio of memory to CPU. These nodes are designed for workloads that require more memory resources, such as:
+                <ul>
+                    <li>Large data transformations</li>
+                    <li>Complex in-memory operations</li>
+                    <li>Handling of large datasets that need to be kept in memory</li>
+                    <li>Tasks involving intensive data processing or analytics</li>
+                </ul>
+                Memory optimized nodes can significantly improve performance for memory-intensive tasks by reducing the need for disk I/O and allowing more data to be processed in memory. This can lead to faster execution times and improved overall system performance for certain types of integration workflows. When considering memory optimized nodes, it's important to assess your specific workload characteristics and consult with SnapLogic experts to determine if they would be beneficial for your use case.
+                </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">Can SnapLogic be deployed with auto-scaling? How?</div>
+            <div class="faq-answer">
+                Yes, SnapLogic supports auto-scaling, but only when deployed with Kubernetes. This capability helps optimize resource utilization and cost efficiency while ensuring performance during peak loads. 
+    
+                The auto-scaling setup in a Kubernetes environment typically involves:
+                <ol>
+                    <li>Deploying SnapLogic on a Kubernetes cluster</li>
+                    <li>Configuring Kubernetes Horizontal Pod Autoscaler (HPA) for SnapLogic pods</li>
+                    <li>Defining scaling policies based on metrics such as CPU utilization, memory usage, or custom SnapLogic-specific metrics</li>
+                    <li>Setting up appropriate monitoring and alerting to oversee the auto-scaling behavior</li>
+                </ol>
+    
+                It's important to note that auto-scaling is not available for non-Kubernetes deployments of SnapLogic. For these deployments, manual scaling or other cloud-native scaling solutions would need to be implemented.
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">What are the recommended EC2 instance types? How about Azure and GCP?</div>
+            <div class="faq-answer">
+                The recommended instance types can vary based on specific workload requirements, but generally:
+                <br><br>
+                <strong>For AWS EC2:</strong>
+                <ul>
+                    <li>General Purpose: m5 or c5 series are often recommended for balanced CPU and memory needs.</li>
+                    <li>Memory-Intensive: r5 series might be more suitable for workloads requiring higher memory-to-CPU ratios.</li>
+                    <li>Compute-Intensive: c5 series can be used for workloads that require more CPU power.</li>
+                </ul>
+    
+                <strong>For Azure:</strong>
+                <ul>
+                    <li>Dv3 or Ev3 series are commonly used for SnapLogic deployments, offering a good balance of compute, memory, and storage performance.</li>
+                    <li>For memory-intensive workloads, the Ev3 series might be preferred.</li>
+                </ul>
+    
+                <strong>For GCP:</strong>
+                <ul>
+                    <li>n1-standard or n1-highcpu series are typically recommended for general-purpose workloads.</li>
+                    <li>n1-highmem series can be considered for memory-intensive operations.</li>
+                </ul>
+    
+                It's important to note that the optimal instance type can vary based on your specific use case, data volumes, integration complexity, and performance requirements. Factors such as network performance, storage requirements, and cost considerations also play a role in selecting the right instance types.
+            </div>
+        </div>
+    </div>
     <div class="popup" id="popup">
         <h2>Enter Password</h2>
         <input type="password" id="password" placeholder="Password">
@@ -369,7 +272,49 @@
         let isBatchSize = true;
         let isMicrobatching = true;
         let pLocked = true;
+        let monacoEditor;
 
+        function initMonacoEditor() {
+            require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs' }});
+            require(['vs/editor/editor.main'], function() {
+                monacoEditor = monaco.editor.create(document.getElementById('monaco-editor'), {
+                    value: '{"msg": "Click on the Generate JSON button to start"}',
+                    language: 'json',
+                    theme: 'vs-light',
+                    automaticLayout: true,
+                    minimap: { enabled: false }
+                });
+                
+                // Enable the Generate JSON button
+                document.getElementById('generateJsonBtn').disabled = false;
+            });
+        }
+
+        // Call this function when the DOM is ready
+        document.addEventListener('DOMContentLoaded', initMonacoEditor);
+
+        function getJsonInput() {
+            return monacoEditor ? monacoEditor.getValue() : '';
+        }
+
+        function setDiagramTabHeight() {
+            const windowHeight = window.innerHeight;
+            const header = document.querySelector('h1').offsetHeight;
+            const tabs = document.querySelector('.tabs').offsetHeight;
+            const footer = document.querySelector('footer').offsetHeight;
+            const padding = 220; // Account for any padding
+
+            const availableHeight = windowHeight - header - tabs - footer - padding;
+            
+            const tab5 = document.getElementById('tab5');
+            tab5.style.height = `${availableHeight}px`;
+            
+            const diagramContainer = document.querySelector('.diagramator-container');
+            if (diagramContainer) {
+                diagramContainer.style.height = '100%';
+            }
+        }
+        
         function openTab(event, tabName) {
             const tabs = document.querySelectorAll('.tab');
             const contents = document.querySelectorAll('.tab-content');
@@ -379,6 +324,172 @@
 
             event.currentTarget.classList.add('active');
             document.getElementById(tabName).classList.add('active');
+
+            // Add or remove 'diagram-tab-active' class on body
+            if (tabName === 'tab5') {
+                document.body.classList.add('diagram-tab-active');
+                setDiagramTabHeight();
+                window.addEventListener('resize', setDiagramTabHeight);
+            } else {
+                document.body.classList.remove('diagram-tab-active');
+                window.removeEventListener('resize', setDiagramTabHeight);
+            }
+        }
+        
+        // Call this when the page loads to set initial height if tab5 is active
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.querySelector('#tab5.active')) {
+                setDiagramTabHeight();
+            }
+        });
+        // Get values from other tabs
+        function generateDiagramJson() {
+            // Get values from other tabs
+            const triggeredNodes = Math.ceil(document.getElementById('result').innerText.match(/HA Nodes Required: (\d+(\.\d+)?)/)?.[1] || 0);
+            const ultraExecutionNodes = Math.ceil(document.getElementById('result-ultra').innerText.match(/HA Execution Nodes Required: (\d+(\.\d+)?)/)?.[1] || 0);
+            const ultraFMNodes = Math.ceil(document.getElementById('result-ultra').innerText.match(/HA FeedMaster Nodes Required: (\d+(\.\d+)?)/)?.[1] || 0);
+            const scheduledNodes = Math.ceil(document.getElementById('result-scheduled').innerText.match(/HA Nodes Required: (\d+(\.\d+)?)/)?.[1] || 0);
+            const headlessUltraNodes = Math.ceil(document.getElementById('result-headless-ultra').innerText.match(/HA Execution Nodes Required: (\d+(\.\d+)?)/)?.[1] || 0);
+
+            let jsonOutput;
+
+            if (triggeredNodes + ultraExecutionNodes + ultraFMNodes + scheduledNodes + headlessUltraNodes === 0) {
+                jsonOutput = {
+                    "msg": "No calculations have been performed yet. Please use the calculator tabs and click 'Calculate' before generating the JSON."
+                };
+            } else {
+                jsonOutput = [
+                    {
+                        "ControlPlane": "US",
+                        "OrgName": "MyOrg-prod",
+                        "Snaplex": []
+                    }
+                ];
+
+                // Real-time snaplex (combining triggered and ultra tasks)
+                if (triggeredNodes + ultraExecutionNodes + ultraFMNodes > 0) {
+                    jsonOutput[0].Snaplex.push({
+                        "name": "real-time",
+                        "type": "cloudplex",
+                        "nodes": [
+                            ...Array(triggeredNodes + ultraExecutionNodes).fill({"type": "JCC", "size": "m"}),
+                            ...Array(ultraFMNodes).fill({"type": "FM", "size": "m"})
+                        ]
+                    });
+                }
+
+                // Scheduled snaplex
+                if (scheduledNodes > 0) {
+                    jsonOutput[0].Snaplex.push({
+                        "name": "scheduled",
+                        "type": "cloudplex",
+                        "nodes": Array(scheduledNodes).fill({"type": "JCC", "size": "m"})
+                    });
+                }
+
+                // Headless ultra snaplex
+                if (headlessUltraNodes > 0) {
+                    jsonOutput[0].Snaplex.push({
+                        "name": "headless-ultra",
+                        "type": "cloudplex",
+                        "nodes": Array(headlessUltraNodes).fill({"type": "JCC", "size": "m"})
+                    });
+                }
+            }
+
+            const formattedJson = JSON.stringify(jsonOutput, null, 2);
+
+            monacoEditor.setValue(formattedJson);
+            monacoEditor.refresh();
+            // Function to update Monaco Editor
+            
+            function updateEditor(json) {
+                if (monacoEditor) {
+                    monacoEditor.setValue(json);
+                } else {
+                    console.error("Monaco Editor instance not found. Retrying in 100ms...");
+                    setTimeout(() => updateEditor(json), 100);
+                }
+            }
+
+            // Call the update function
+            updateEditor(generatedJson);
+        }
+
+        function getJsonInput() {
+            if (monacoEditor) {
+                return monacoEditor.getValue();
+            } else {
+                console.error("Monaco Editor instance not found when trying to get JSON input");
+                return '';
+            }
+        }
+
+        function formatJson() {
+            if (monacoEditor) {
+                const value = monacoEditor.getValue();
+                try {
+                    const formatted = JSON.stringify(JSON.parse(value), null, 2);
+                    monacoEditor.setValue(formatted);
+                } catch (error) {
+                    console.error('Error formatting JSON:', error);
+                }
+            }
+        }
+
+        // Custom JSON formatting function
+        function formatJSON(obj, indent = 0) {
+            if (Array.isArray(obj)) {
+                if (obj.length === 0) return '[]';
+                let result = '[\n';
+                for (let i = 0; i < obj.length; i++) {
+                    result += ' '.repeat(indent + 2) + formatJSON(obj[i], indent + 2);
+                    if (i < obj.length - 1) result += ',';
+                    result += '\n';
+                }
+                return result + ' '.repeat(indent) + ']';
+            } else if (typeof obj === 'object' && obj !== null) {
+                let result = '{\n';
+                const keys = Object.keys(obj);
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    result += ' '.repeat(indent + 2) + `"${key}": ` + formatJSON(obj[key], indent + 2);
+                    if (i < keys.length - 1) result += ',';
+                    result += '\n';
+                }
+                return result + ' '.repeat(indent) + '}';
+            } else {
+                return JSON.stringify(obj);
+            }
+        }
+
+        function toggleAnswer(element) {
+            const faqItem = element.closest('.faq-item');
+            if (!faqItem) return;
+
+            const answer = faqItem.querySelector('.faq-answer');
+            const icon = element.querySelector('.faq-icon');
+
+            // Close all other open FAQ items
+            document.querySelectorAll('.faq-item.active').forEach(item => {
+                if (item !== faqItem) {
+                    item.classList.remove('active');
+                    const itemAnswer = item.querySelector('.faq-answer');
+                    const itemIcon = item.querySelector('.faq-icon');
+                    if (itemAnswer) itemAnswer.style.display = 'none';
+                    if (itemIcon) itemIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+
+            // Toggle the clicked FAQ item
+            faqItem.classList.toggle('active');
+            if (faqItem.classList.contains('active')) {
+                if (answer) answer.style.display = 'block';
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            } else {
+                if (answer) answer.style.display = 'none';
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
         }
 
         function calculate() {
@@ -583,9 +694,436 @@
                 alert('Incorrect password. Please try again.');
             }
         }
+
     </script>
     <footer>
         <p><b>Disclaimer: </b>The SnapLogic Sizing Calculator provides estimations based on user inputs and general assumptions. The results generated by this tool are intended for preliminary planning purposes only and should not be considered as definitive or binding. Actual sizing requirements may vary based on specific use cases, system configurations, workload variations, and other factors not accounted for in this tool. We recommend consulting with a SnapLogic representative or conducting a detailed analysis for precise sizing and configuration.</p>
     </footer>
+</div>
+<script type="text/babel">
+    console.log('Script reached');
+
+    const { useState, useRef, useEffect, useCallback } = React;
+    const { Excalidraw } = ExcalidrawLib;
+
+    function App() {
+    const [jsonInput, setJsonInput] = useState('');
+    const excalidrawRef = useRef(null);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (monacoEditor) {
+                monacoEditor.onDidChangeModelContent(() => {
+                    setJsonInput(monacoEditor.getValue());
+                });
+                clearInterval(interval);
+            }
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, []);
+
+    const handleGenerateDiagram = () => {
+        generateDiagram();
+    };
+
+    useEffect(() => {
+        const container = document.getElementById('generate-diagram-container');
+        if (container) {
+            ReactDOM.render(
+                <button onClick={handleGenerateDiagram}>Generate Diagram</button>,
+                container
+            );
+        }
+    }, []);
+
+    const generateDiagram = useCallback(() => {
+        setError(null);
+        const currentJsonInput = getJsonInput();
+        console.log("Current JSON input:", currentJsonInput);
+        console.log("JSON input length:", currentJsonInput.length);
+        
+        if (!currentJsonInput.trim()) {
+            console.error("JSON input is empty in generateDiagram");
+            setError("JSON input is empty");
+            return;
+        }
+        
+        try {
+            const data = JSON.parse(currentJsonInput);
+            console.log("Parsed JSON data:", data);
+        const elements = [];
+        let yOffset = 0;
+        let maxOrgWidth = 0;
+
+        // Function to determine the size multiplier for nodes
+        const getNodeSize = (size) => {
+            switch(size) {
+                case 'l': return 1.5;
+                case 'xl': return 2;
+                case 'xxl': return 3;
+                default: return 1;
+            }
+        };
+
+        // Array of distinct, light colors for org backgrounds
+        const orgColors = ["#ced4da", "#e9ecef", "#dee2e6", "#adb5bd", "#f1f3f5", "#e3fafc", "#d0ebff", "#d3f9d8"];
+
+        data.forEach((org, orgIndex) => {
+            // Define base dimensions and spacing
+            const snaplexBaseWidth = 350;
+            const nodeBaseWidth = 120;
+            const nodeBaseHeight = 70;
+            const orgPadding = 100;
+            const snaplexVerticalSpacing = 50;
+
+            let maxSnaplexHeight = 0;
+            let totalSnaplexWidth = 0;
+
+            // Calculate dimensions for all snaplexes in the org
+            org.Snaplex.forEach(snaplex => {
+                const jccNodes = snaplex.nodes.filter(node => node.type === 'JCC');
+                const fmNodes = snaplex.nodes.filter(node => node.type === 'FM');
+                const totalNodes = snaplex.nodes.length;
+                
+                // Calculate total width needed for all nodes in this snaplex
+                const totalNodeWidth = snaplex.nodes.reduce((total, node) => total + nodeBaseWidth * getNodeSize(node.size) + 20, 0);
+                
+                // Find the maximum height needed for JCC and FM nodes
+                const maxJccHeight = Math.max(...jccNodes.map(node => nodeBaseHeight * getNodeSize(node.size)), nodeBaseHeight);
+                const maxFmHeight = Math.max(...fmNodes.map(node => nodeBaseHeight * getNodeSize(node.size)), nodeBaseHeight);
+                
+                // Calculate vertical spacing based on number of nodes
+                const verticalSpacing = 50 * (1 + Math.floor(totalNodes / 6));
+                
+                // Determine snaplex dimensions
+                const snaplexWidth = Math.max(snaplexBaseWidth, totalNodeWidth + 40);
+                const snaplexHeight = 200 + maxJccHeight + maxFmHeight + verticalSpacing;
+
+                maxSnaplexHeight = Math.max(maxSnaplexHeight, snaplexHeight);
+                totalSnaplexWidth += snaplexWidth + 50;
+            });
+
+            // Calculate org dimensions
+            const orgWidth = Math.max(totalSnaplexWidth + orgPadding * 2, 1000);
+            maxOrgWidth = Math.max(maxOrgWidth, orgWidth);
+            const orgHeight = maxSnaplexHeight + orgPadding * 2;
+
+            // Create org shape and text
+            const getControlPlaneEmoji = (controlPlane) => {
+                if (controlPlane === "US") return "🌎";
+                if (controlPlane === "EMEA") return "🌍";
+                return ""; // Return an empty string for any other control plane
+            };
+            const [orgShape, orgText] = createBasicShape(
+                "rectangle", 
+                0, 
+                yOffset, 
+                orgWidth, 
+                orgHeight, 
+                `${getControlPlaneEmoji(org.ControlPlane)} ${org.ControlPlane} - ${org.OrgName}`, 
+                'org'
+            );
+            orgShape.backgroundColor = getOrgColor();
+            elements.push(orgShape, orgText);
+            
+            let xOffset = orgPadding;
+            org.Snaplex.forEach((snaplex, snaplexIndex) => {
+                const jccNodes = snaplex.nodes.filter(node => node.type === 'JCC');
+                const fmNodes = snaplex.nodes.filter(node => node.type === 'FM');
+                const totalNodes = snaplex.nodes.length;
+        
+                // Calculate dimensions for this specific snaplex
+                const totalNodeWidth = snaplex.nodes.reduce((total, node) => total + nodeBaseWidth * getNodeSize(node.size) + 20, 0);
+                const maxJccHeight = Math.max(...jccNodes.map(node => nodeBaseHeight * getNodeSize(node.size)), nodeBaseHeight);
+                const maxFmHeight = Math.max(...fmNodes.map(node => nodeBaseHeight * getNodeSize(node.size)), nodeBaseHeight);
+        
+                const verticalSpacing = 50 * (1 + Math.floor(totalNodes / 6));
+        
+                const currentSnaplexWidth = Math.max(snaplexBaseWidth, totalNodeWidth + 40);
+                const currentSnaplexHeight = 200 + maxJccHeight + maxFmHeight + verticalSpacing;
+
+                // Create snaplex shape
+                elements.push(...createBasicShape("rectangle", xOffset, yOffset + orgPadding, currentSnaplexWidth, currentSnaplexHeight, `${snaplex.type === 'groundplex' ? '🏠' : '☁️'} ${snaplex.name}`, 'snaplex'));
+
+                let jccXOffset = xOffset + 20;
+                let fmXOffset = xOffset + 20;
+                const jccYOffset = yOffset + orgPadding + 100;
+                const fmYOffset = jccYOffset + maxJccHeight + verticalSpacing;
+
+                // Create JCC node shapes
+                jccNodes.forEach((node, index) => {
+                    const size = getNodeSize(node.size);
+                    elements.push(...createBasicShape(
+                        "rectangle",
+                        jccXOffset,
+                        jccYOffset,
+                        nodeBaseWidth * size,
+                        nodeBaseHeight * size,
+                        `🖥️ JCC`,
+                        'node'
+                    ));
+                    jccXOffset += nodeBaseWidth * size + 20;
+                });
+
+                // Create FM node shapes
+                fmNodes.forEach((node, index) => {
+                    const size = getNodeSize(node.size);
+                    elements.push(...createBasicShape(
+                        "rectangle",
+                        fmXOffset,
+                        fmYOffset,
+                        nodeBaseWidth * size,
+                        nodeBaseHeight * size,
+                        `🔄 FM`,
+                        'node'
+                    ));
+                    fmXOffset += nodeBaseWidth * size + 20;
+                });
+
+                // Create arrows from FM to JCC nodes
+                fmNodes.forEach((fmNode, fmIndex) => {
+                    jccNodes.forEach((jccNode, jccIndex) => {
+                        const fmSize = getNodeSize(fmNode.size);
+                        const jccSize = getNodeSize(jccNode.size);
+                        const fmX = xOffset + 20 + fmIndex * (nodeBaseWidth * fmSize + 20) + nodeBaseWidth * fmSize / 2;
+                        const fmY = fmYOffset;
+                        const jccX = xOffset + 20 + jccIndex * (nodeBaseWidth * jccSize + 20) + nodeBaseWidth * jccSize / 2;
+                        const jccY = jccYOffset + nodeBaseHeight * jccSize;
+                        elements.push(createArrow(fmX, fmY, jccX, jccY));
+                    });
+                });
+
+                xOffset += currentSnaplexWidth + 50;
+            });
+
+            yOffset += orgHeight + snaplexVerticalSpacing;
+        });
+
+        if (excalidrawRef.current) {
+                const diagramOutput = document.querySelector('.diagram-output');
+                const totalHeight = Math.max(...elements.map(e => e.y + e.height));
+                const totalWidth = Math.max(...elements.map(e => e.x + e.width));
+
+                // Calculate the zoom level based on the diagram size and available space
+                const widthRatio = diagramOutput.offsetWidth / totalWidth;
+                const heightRatio = diagramOutput.offsetHeight / totalHeight;
+                const zoomLevel = Math.min(widthRatio, heightRatio, 1) * 0.7; // 70% of the calculated zoom
+
+                // Update the Excalidraw scene with the generated elements and calculated dimensions
+                excalidrawRef.current.updateScene({
+                    elements: elements,
+                    appState: {
+                        viewBackgroundColor: "#ffffff",
+                        width: diagramOutput.offsetWidth,
+                        height: diagramOutput.offsetHeight,
+                        scrollX: (diagramOutput.offsetWidth - totalWidth * zoomLevel) / 2,
+                        scrollY: (diagramOutput.offsetHeight - totalHeight * zoomLevel) / 2,
+                        zoom: { value: zoomLevel }
+                    }
+                });
+            }
+        } catch (err) {
+            console.error("Error parsing JSON:", err);
+            setError("Error parsing JSON: " + err.message);
+        }
+    }, []);
+
+function createBasicShape(type, x, y, width, height, text, shapeType = 'org') {
+const shapeId = Math.random().toString(36).substr(2, 9);
+const textId = Math.random().toString(36).substr(2, 9);
+
+const shape = {
+    id: shapeId,
+    type,
+    x,
+    y,
+    width,
+    height,
+    angle: 0,
+    strokeColor: "#000000",
+    backgroundColor: "transparent",
+    fillStyle: "hachure",
+    strokeWidth: 1,
+    strokeStyle: "solid",
+    roughness: 1,
+    opacity: 100,
+    groupIds: [],
+    strokeSharpness: "sharp",
+    seed: Math.floor(Math.random() * 1000000),
+    version: 1,
+    versionNonce: 0,
+    isDeleted: false,
+    boundElements: [{ type: "text", id: textId }],
+    updated: Date.now(),
+    link: null,
+    locked: false
+};
+
+// Apply specific styles based on shape type
+if (shapeType === 'snaplex' || shapeType === 'node') {
+    shape.roundness = { type: 3 };
+    shape.strokeStyle = "dashed";
+    shape.fillStyle = "solid";
+    shape.backgroundColor = "white";
+} else if (shapeType === 'org') {
+    shape.fillStyle = "hachure";
+    // We'll set the background color in the generateDiagram function
+}
+
+const textElement = {
+    id: textId,
+    type: "text",
+    x: x + width / 2,
+    y: y + 18,
+    width: 0,
+    height: 35,
+    angle: 0,
+    strokeColor: "#000000",
+    backgroundColor: "transparent",
+    fillStyle: "hachure",
+    strokeWidth: 1,
+    strokeStyle: "solid",
+    roughness: 1,
+    opacity: 100,
+    groupIds: [],
+    roundness: null,
+    seed: Math.floor(Math.random() * 1000000),
+    version: 1,
+    versionNonce: 0,
+    isDeleted: false,
+    boundElements: null,
+    updated: Date.now(),
+    link: null,
+    locked: false,
+    text,
+    fontSize: 28,
+    fontFamily: 1,
+    textAlign: "center",
+    verticalAlign: "middle",
+    baseline: 25,
+    containerId: shapeId,
+    originalText: text,
+    lineHeight: 1.25
+};
+
+return [shape, textElement];
+}
+
+        // Color-picking function
+        const getOrgColor = (() => {
+            const colors = [
+                // Light Gray
+                "#C0C0C0",
+                // Light Blue
+                "#B3E0FF",
+                // Light Turquoise
+                "#A0E6E6",
+                // Light Taupe
+                "#C2B280",
+                // Light Purple (Pourpre)
+                "#E0B0FF",
+                // Light Coal
+                "#B0C4DE",
+                // Light Blue Bottle
+                "#A4D3EE"
+            ];
+            
+            const usedColors = new Set();
+
+            return () => {
+                if (usedColors.size === colors.length) {
+                    usedColors.clear();
+                }
+
+                let color;
+                do {
+                    color = colors[Math.floor(Math.random() * colors.length)];
+                } while (usedColors.has(color));
+
+                usedColors.add(color);
+                return color;
+            };
+        })();
+
+        function createArrow(x1, y1, x2, y2) {
+            return {
+                id: Math.random().toString(36).substr(2, 9),
+                type: "arrow",
+                x: x1,
+                y: y1,
+                width: x2 - x1,
+                height: y2 - y1,
+                angle: 0,
+                strokeColor: "#000000",
+                backgroundColor: "transparent",
+                fillStyle: "hachure",
+                strokeWidth: 1,
+                strokeStyle: "solid",
+                roughness: 1,
+                opacity: 100,
+                groupIds: [],
+                strokeSharpness: "round",
+                seed: Math.floor(Math.random() * 1000000),
+                version: 1,
+                versionNonce: 0,
+                isDeleted: false,
+                boundElements: null,
+                updated: Date.now(),
+                link: null,
+                locked: false,
+                points: [[0, 0], [x2 - x1, y2 - y1]],
+                lastCommittedPoint: null,
+                startBinding: null,
+                endBinding: null,
+                startArrowhead: null,
+                endArrowhead: "arrow"
+            };
+        }
+
+        return (
+            <div style={{ width: '100%', height: '100%' }}>
+                <Excalidraw
+                    ref={excalidrawRef}
+                    initialData={{
+                        elements: [],
+                        appState: { viewBackgroundColor: "#ffffff" }
+                    }}
+                />
+                {error && <div style={{color: 'red', position: 'absolute', bottom: 10, left: 10}}>{error}</div>}
+            </div>
+        );
+    }
+
+    // Wrap the render in a DOMContentLoaded event to ensure the container exists
+    console.log('Script reached');
+
+    function initializeApp() {
+        console.log('Initializing app');
+        const container = document.getElementById('diagram-container');
+        if (container) {
+            console.log('Root container found');
+            try {
+                ReactDOM.render(<App />, container);
+                console.log('React app rendered successfully');
+            } catch (error) {
+                console.error('Error rendering React app:', error);
+            }
+        } else {
+            console.log('Root container not found');
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeApp);
+        console.log('Added DOMContentLoaded listener');
+    } else {
+        console.log('DOM already loaded, initializing immediately');
+        initializeApp();
+    }
+
+    console.log('End of script');
+</script>
 </body>
 </html>
