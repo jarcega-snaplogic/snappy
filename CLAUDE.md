@@ -93,18 +93,18 @@ When modifying these features, search for `pLocked` variable and associated disp
 
 ## Calculation Formulas Reference
 
-**Triggered Tasks** (line 497):
+**Triggered Tasks** (line 503):
 ```javascript
 concurrentAPI = apiPerDay / coverageHours / 60 / 60 * (peak / 100)
 nodesRequired = concurrentAPI / (20 / apiExecutionTime)
 ```
-Default: 833,333 API/day (equivalent to 300M/year distributed over 30 days/month)
+Default: 1,000,000 API/day
 
-**Ultra Tasks** (line 528):
+**Ultra Tasks** (line 535):
 - Execution nodes: `concurrentAPI / (100 / apiExecutionTime)`
 - FeedMaster nodes: `concurrentAPI / (200 / apiExecutionTime)`
 - Formula: `concurrentAPI = apiPerDay / coverageHours / 60 / 60 * (peak / 100)`
-- Default: 416,667 API/day (equivalent to 100M/year distributed over 20 days/month)
+- Default: 5,000,000 API/day
 
 **Scheduled Tasks** (line 652):
 ```javascript
@@ -126,11 +126,11 @@ nodesRequired = mbPerMinute * complexityMultiplier / 300
 
 ### Modifying Formulas
 All calculation constants are inline within their respective functions. Common values:
-- **20** - Triggered task TPS per node (line 498)
-- **100** - Ultra execution TPS per node (line 529)
-- **200** - Ultra FM TPS per node (line 531)
+- **20** - Triggered task TPS per node (line 504)
+- **100** - Ultra execution TPS per node (line 536)
+- **200** - Ultra FM TPS per node (line 538)
 - **300** - Scheduled task MB/min per node (line 644)
-- **1.3** - HA multiplier (lines 499, 530, 532, 645, 577)
+- **1.3** - HA multiplier (lines 505, 537, 539, 645, 577)
 
 ### Styling the Diagram Tab
 When diagram tab is active, body gets class `diagram-tab-active` (line 330), which removes max-width constraint on main container (lines 16-20 in styles.css).
