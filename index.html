@@ -363,6 +363,1458 @@
             return context;
         }
 
+        // ==================== SHARED COMPONENTS ====================
+
+        /**
+         * FormField Component
+         * A reusable labeled input that supports number inputs, select dropdowns, and password fields
+         *
+         * @param {Object} props
+         * @param {string} props.id - Field ID
+         * @param {string} props.label - Field label
+         * @param {string} props.type - Input type ('number', 'select', 'password')
+         * @param {any} props.value - Current value
+         * @param {Function} props.onChange - Change handler
+         * @param {Array} props.options - Options for select (array of {value, label})
+         * @param {boolean} props.visible - Visibility flag (default true)
+         * @param {number} props.min - Minimum value for number inputs
+         * @param {number} props.max - Maximum value for number inputs
+         * @param {number} props.step - Step increment for number inputs
+         */
+        function FormField({
+            id,
+            label,
+            type = 'number',
+            value,
+            onChange,
+            options = [],
+            visible = true,
+            min,
+            max,
+            step
+        }) {
+            if (!visible) return null;
+
+            const fieldId = id || `field-${label.replace(/\s+/g, '-').toLowerCase()}`;
+
+            const handleChange = (e) => {
+                if (type === 'number') {
+                    onChange(parseFloat(e.target.value) || 0);
+                } else if (type === 'select') {
+                    onChange(parseFloat(e.target.value) || e.target.value);
+                } else {
+                    onChange(e.target.value);
+                }
+            };
+
+            return (
+                <>
+                    <label htmlFor={fieldId}>{label}</label>
+                    {type === 'select' ? (
+                        <select id={fieldId} value={value} onChange={handleChange}>
+                            {options.map(opt => (
+                                <option key={opt.value} value={opt.value}>
+                                    {opt.label}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <input
+                            id={fieldId}
+                            type={type}
+                            value={value}
+                            onChange={handleChange}
+                            min={min}
+                            max={max}
+                            step={step}
+                        />
+                    )}
+                </>
+            );
+        }
+
+        /**
+         * FAQItem Component
+         * A collapsible FAQ question/answer item
+         *
+         * @param {Object} props
+         * @param {string} props.question - FAQ question text
+         * @param {React.ReactNode} props.answer - FAQ answer content
+         * @param {boolean} props.isOpen - Whether this FAQ is currently open
+         * @param {Function} props.onToggle - Toggle handler
+         */
+        function FAQItem({ question, answer, isOpen, onToggle }) {
+            return (
+                <div className={`faq-item ${isOpen ? 'active' : ''}`}>
+                    <div className="faq-question" onClick={onToggle}>
+                        {question}
+                    </div>
+                    {isOpen && (
+                        <div className="faq-answer">
+                            {answer}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        /**
+         * FAQTab Component
+         * Container for all FAQ items with accordion behavior
+         */
+        function FAQTab() {
+            const [openFaqId, setOpenFaqId] = useState(null);
+
+            const handleToggle = (faqId) => {
+                setOpenFaqId(openFaqId === faqId ? null : faqId);
+            };
+
+            const faqData = [
+                {
+                    id: 'faq-1',
+                    question: 'What are the nodes?',
+                    answer: (
+                        <>
+                            Nodes in SnapLogic are the computational units that execute integration tasks. They are responsible for running Snaplex instances, which process and route data according to the defined integration pipelines.
+                            <br /><br />
+                            These nodes form the backbone of SnapLogic's distributed processing architecture, allowing for scalable and efficient data integration across various sources and destinations.
+                        </>
+                    )
+                },
+                {
+                    id: 'faq-2',
+                    question: 'What are feedmaster nodes?',
+                    answer: (
+                        <>
+                            Feedmaster nodes are specialized nodes in SnapLogic that play a crucial role in managing and coordinating the overall system. They have several key responsibilities:
+                            <ul>
+                                <li>Task Distribution: They manage and coordinate the distribution of tasks across execution nodes.</li>
+                                <li>Load Balancing: Ensure efficient utilization of resources within a SnapLogic deployment.</li>
+                                <li>Health Monitoring: Continuously monitor the health and status of other nodes in the cluster.</li>
+                                <li>Failover Handling: Manage failover scenarios to maintain high availability of the system.</li>
+                                <li>Cluster Management: Act as the central point of control for the SnapLogic cluster.</li>
+                            </ul>
+                            Feedmaster nodes are essential for maintaining the reliability and performance of a SnapLogic deployment, especially in large-scale or mission-critical environments.
+                        </>
+                    )
+                },
+                {
+                    id: 'faq-3',
+                    question: 'Are there different sizes for nodes? Which are the available sizes?',
+                    answer: (
+                        <>
+                            Yes, SnapLogic offers different node sizes to accommodate varying workload requirements. The available sizes are:
+                            <ul>
+                                <li>Medium</li>
+                                <li>Large</li>
+                                <li>Extra-Large (XL)</li>
+                                <li>Extra-Extra-Large (XXL)</li>
+                            </ul>
+                            The exact specifications for each size may vary depending on the deployment environment (cloud provider or on-premises) and can be customized based on specific needs. These different sizes allow organizations to optimize their SnapLogic deployment for different types of workloads, balancing performance and cost considerations.
+                        </>
+                    )
+                },
+                {
+                    id: 'faq-4',
+                    question: 'Will the node sizing calculator recommend different node sizes?',
+                    answer: (
+                        <>
+                            The current version of this calculator provides estimates for the number of medium-sized nodes required. It does not recommend specific node sizes or a mix of different sizes. The estimates are based on general assumptions and are intended for initial planning purposes.
+                            <br /><br />
+                            For detailed recommendations on node sizes or a mix of different node sizes, it's best to consult with a SnapLogic representative. They can take into account your specific use case, performance requirements, data volumes, and integration complexity to provide a more tailored sizing recommendation. This may include suggestions for using different node sizes or specialized configurations to optimize your SnapLogic deployment.
+                        </>
+                    )
+                },
+                {
+                    id: 'faq-5',
+                    question: 'What are memory optimized nodes?',
+                    answer: (
+                        <>
+                            Memory optimized nodes are specialized node configurations that have a higher ratio of memory to CPU. These nodes are designed for workloads that require more memory resources, such as:
+                            <ul>
+                                <li>Large data transformations</li>
+                                <li>Complex in-memory operations</li>
+                                <li>Handling of large datasets that need to be kept in memory</li>
+                                <li>Tasks involving intensive data processing or analytics</li>
+                            </ul>
+                            Memory optimized nodes can significantly improve performance for memory-intensive tasks by reducing the need for disk I/O and allowing more data to be processed in memory. This can lead to faster execution times and improved overall system performance for certain types of integration workflows. When considering memory optimized nodes, it's important to assess your specific workload characteristics and consult with SnapLogic experts to determine if they would be beneficial for your use case.
+                        </>
+                    )
+                },
+                {
+                    id: 'faq-6',
+                    question: 'Can SnapLogic be deployed with auto-scaling? How?',
+                    answer: (
+                        <>
+                            Yes, SnapLogic supports auto-scaling, but only when deployed with Kubernetes. This capability helps optimize resource utilization and cost efficiency while ensuring performance during peak loads.
+                            <br /><br />
+                            The auto-scaling setup in a Kubernetes environment typically involves:
+                            <ol>
+                                <li>Deploying SnapLogic on a Kubernetes cluster</li>
+                                <li>Configuring Kubernetes Horizontal Pod Autoscaler (HPA) for SnapLogic pods</li>
+                                <li>Defining scaling policies based on metrics such as CPU utilization, memory usage, or custom SnapLogic-specific metrics</li>
+                                <li>Setting up appropriate monitoring and alerting to oversee the auto-scaling behavior</li>
+                            </ol>
+                            It's important to note that auto-scaling is not available for non-Kubernetes deployments of SnapLogic. For these deployments, manual scaling or other cloud-native scaling solutions would need to be implemented.
+                        </>
+                    )
+                },
+                {
+                    id: 'faq-7',
+                    question: 'What are the recommended EC2 instance types? How about Azure and GCP?',
+                    answer: (
+                        <>
+                            The recommended instance types can vary based on specific workload requirements, but generally:
+                            <br /><br />
+                            <strong>For AWS EC2:</strong>
+                            <ul>
+                                <li>General Purpose: m5 or c5 series are often recommended for balanced CPU and memory needs.</li>
+                                <li>Memory-Intensive: r5 series might be more suitable for workloads requiring higher memory-to-CPU ratios.</li>
+                                <li>Compute-Intensive: c5 series can be used for workloads that require more CPU power.</li>
+                            </ul>
+                            <strong>For Azure:</strong>
+                            <ul>
+                                <li>Dv3 or Ev3 series are commonly used for SnapLogic deployments, offering a good balance of compute, memory, and storage performance.</li>
+                                <li>For memory-intensive workloads, the Ev3 series might be preferred.</li>
+                            </ul>
+                            <strong>For GCP:</strong>
+                            <ul>
+                                <li>n1-standard or n1-highcpu series are typically recommended for general-purpose workloads.</li>
+                                <li>n1-highmem series can be considered for memory-intensive operations.</li>
+                            </ul>
+                            It's important to note that the optimal instance type can vary based on your specific use case, data volumes, integration complexity, and performance requirements. Factors such as network performance, storage requirements, and cost considerations also play a role in selecting the right instance types.
+                        </>
+                    )
+                }
+            ];
+
+            return (
+                <div>
+                    <h2>Frequently Asked Questions</h2>
+                    {faqData.map(faq => (
+                        <FAQItem
+                            key={faq.id}
+                            question={faq.question}
+                            answer={faq.answer}
+                            isOpen={openFaqId === faq.id}
+                            onToggle={() => handleToggle(faq.id)}
+                        />
+                    ))}
+                </div>
+            );
+        }
+
+        /**
+         * Toggle Component
+         * A switch component for batch mode and microbatching toggles
+         *
+         * @param {Object} props
+         * @param {string} props.id - Toggle ID
+         * @param {string} props.label - Toggle label
+         * @param {boolean} props.checked - Current checked state
+         * @param {Function} props.onChange - Change handler
+         */
+        function Toggle({ id, label, checked, onChange }) {
+            const toggleId = id || `toggle-${label.replace(/\s+/g, '-').toLowerCase()}`;
+
+            return (
+                <div className="toggle-container">
+                    <label htmlFor={toggleId} className="toggle-label">
+                        {label}
+                    </label>
+                    <label className="toggle-switch">
+                        <input
+                            type="checkbox"
+                            id={toggleId}
+                            checked={checked}
+                            onChange={(e) => onChange(e.target.checked)}
+                        />
+                        <span className="slider"></span>
+                    </label>
+                </div>
+            );
+        }
+
+        /**
+         * Button Component
+         * Standardized button with loading and disabled states
+         *
+         * @param {Object} props
+         * @param {React.ReactNode} props.children - Button text/content
+         * @param {Function} props.onClick - Click handler
+         * @param {boolean} props.disabled - Disabled state
+         * @param {boolean} props.loading - Loading state
+         * @param {string} props.type - Button type ('button' or 'submit')
+         */
+        function Button({ children, onClick, disabled = false, loading = false, type = 'button' }) {
+            return (
+                <button
+                    type={type}
+                    onClick={onClick}
+                    disabled={disabled || loading}
+                >
+                    {loading ? 'Loading...' : children}
+                </button>
+            );
+        }
+
+        /**
+         * ResultDisplay Component
+         * Displays calculator results with formatted numbers and messages
+         *
+         * @param {Object} props
+         * @param {Object} props.results - Result object with calculation values
+         * @param {string} props.type - Calculator type ('triggered', 'ultra', 'scheduled', 'headless')
+         */
+        function ResultDisplay({ results, type }) {
+            if (!results) return null;
+
+            const formatNumber = (num, decimals = 2) => {
+                return num.toFixed(decimals);
+            };
+
+            const renderTriggeredResults = () => (
+                <>
+                    <p>Concurrent API: {formatNumber(results.concurrentAPI)}</p>
+                    <p>Nodes Required: {formatNumber(results.nodesRequired)}</p>
+                    <p>HA Nodes Required: {Math.ceil(results.haNodesRequired)}</p>
+                    {results.haNodesRequired > 6 && (
+                        <p className="info">
+                            Consider looking into{' '}
+                            <a
+                                href="https://www.snaplogic.com/resources/data-sheets/snaplogic-ultra-pipelines"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                SnapLogic Ultra Pipeline
+                            </a>
+                            {' '}for better performance.
+                        </p>
+                    )}
+                </>
+            );
+
+            const renderUltraResults = () => (
+                <>
+                    <p>API per second: {formatNumber(results.concurrentAPI)}</p>
+                    <p>Execution Nodes Required: {formatNumber(results.executionNodesRequired)}</p>
+                    <p>HA Execution Nodes Required: {Math.ceil(results.haExecutionNodesRequired)}</p>
+                    <p>FeedMaster Nodes Required: {formatNumber(results.fmNodesRequired)}</p>
+                    <p>HA FeedMaster Nodes Required: {Math.ceil(results.haFmNodesRequired)}</p>
+                </>
+            );
+
+            const renderScheduledResults = () => (
+                <>
+                    <p>MB per minute: {formatNumber(results.mbPerMinute)}</p>
+                    <p>Nodes Required: {formatNumber(results.nodesRequired)}</p>
+                    <p>HA Nodes Required: {Math.ceil(results.haNodesRequired)}</p>
+                </>
+            );
+
+            const renderHeadlessResults = () => {
+                if (results.isMicrobatching) {
+                    return (
+                        <>
+                            <p>Event per second: {formatNumber(results.eventPerSecond)}</p>
+                            <p>Execution Nodes Required: {formatNumber(results.executionNodesRequired)}</p>
+                            <p>HA Execution Nodes Required: {Math.ceil(results.haExecutionNodesRequired)}</p>
+                        </>
+                    );
+                } else {
+                    return (
+                        <>
+                            <p>Event per minute: {formatNumber(results.eventPerMinute)}</p>
+                            <p>MB per minute: {formatNumber(results.mbPerMinute)}</p>
+                            <p>Execution Nodes Required: {formatNumber(results.executionNodesRequired)}</p>
+                            <p>HA Execution Nodes Required: {Math.ceil(results.haExecutionNodesRequired)}</p>
+                        </>
+                    );
+                }
+            };
+
+            return (
+                <div className="result">
+                    <h2>Results</h2>
+                    {type === 'triggered' && renderTriggeredResults()}
+                    {type === 'ultra' && renderUltraResults()}
+                    {type === 'scheduled' && renderScheduledResults()}
+                    {type === 'headless' && renderHeadlessResults()}
+                </div>
+            );
+        }
+
+        /**
+         * TabBar Component
+         * Tab navigation with active state handling
+         *
+         * @param {Object} props
+         * @param {Array} props.tabs - Array of tab objects {id, label}
+         */
+        function TabBar({ tabs }) {
+            const { activeTab, setActiveTab } = useApp();
+
+            return (
+                <div className="tabs">
+                    {tabs.map(tab => (
+                        <div
+                            key={tab.id}
+                            className={`tab ${activeTab === tab.id ? 'active' : ''}`}
+                            onClick={() => setActiveTab(tab.id)}
+                        >
+                            {tab.label}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        /**
+         * Header Component
+         * Logo and title with password modal trigger
+         *
+         * @param {Object} props
+         * @param {Function} props.onLogoClick - Click handler for logo (opens password modal)
+         */
+        function Header({ onLogoClick }) {
+            return (
+                <>
+                    <div className="logo" onClick={onLogoClick} style={{ cursor: 'pointer' }}>
+                        <img
+                            src="https://www.snaplogic.com/wp-content/uploads/2022/09/SL_logo_blue_web.png"
+                            alt="SnapLogic Logo"
+                        />
+                    </div>
+                    <h1>Node Sizing Calculator</h1>
+                </>
+            );
+        }
+
+        // ==================== CALCULATOR COMPONENTS ====================
+
+        /**
+         * TriggeredTaskCalculator - Calculator for triggered tasks
+         * Preserves exact formulas from original (lines 497-499 in backup)
+         */
+        function TriggeredTaskCalculator() {
+            const { passwordUnlocked } = useApp();
+            const { setTriggeredResult } = useCalculator();
+
+            const [formData, setFormData] = useState({
+                apiPerDay: CALCULATOR_CONSTANTS.TRIGGERED_TASK.DEFAULT_API_PER_DAY,
+                coverageHours: CALCULATOR_CONSTANTS.TRIGGERED_TASK.DEFAULT_COVERAGE_HOURS,
+                apiResponseTime: CALCULATOR_CONSTANTS.TRIGGERED_TASK.DEFAULT_RESPONSE_TIME,
+                peak: CALCULATOR_CONSTANTS.TRIGGERED_TASK.DEFAULT_PEAK
+            });
+            const [result, setResult] = useState(null);
+
+            const updateField = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const calculate = () => {
+                // CRITICAL: Preserve exact formula from original (lines 497-499)
+                const concurrentAPI = formData.apiPerDay / formData.coverageHours / 60 / 60 * (formData.peak / 100);
+                const nodesRequired = concurrentAPI / (20 / formData.apiResponseTime);
+                const haNodesRequired = Math.ceil(Math.max(nodesRequired * 1.3, 2));
+
+                const calculatedResult = {
+                    concurrentAPI,
+                    nodesRequired,
+                    haNodesRequired
+                };
+
+                setResult(calculatedResult);
+                setTriggeredResult(calculatedResult);
+            };
+
+            return (
+                <>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <FormField
+                            id="api-per-day"
+                            label="API requests per Day"
+                            value={formData.apiPerDay}
+                            onChange={(value) => updateField('apiPerDay', value)}
+                        />
+
+                        <FormField
+                            id="coverage-hours"
+                            label="API Usage Hours per Day"
+                            value={formData.coverageHours}
+                            onChange={(value) => updateField('coverageHours', value)}
+                        />
+
+                        <FormField
+                            id="api-response-time"
+                            label="API Response Time (seconds)"
+                            value={formData.apiResponseTime}
+                            onChange={(value) => updateField('apiResponseTime', value)}
+                            visible={passwordUnlocked}
+                        />
+
+                        <FormField
+                            id="peak"
+                            label="Peak (%)"
+                            value={formData.peak}
+                            onChange={(value) => updateField('peak', value)}
+                        />
+
+                        <Button onClick={calculate}>Calculate</Button>
+                    </form>
+
+                    {result && <ResultDisplay results={result} type="triggered" />}
+                </>
+            );
+        }
+
+        /**
+         * UltraTaskCalculator - Calculator for ultra tasks
+         * Preserves exact formulas from original (lines 528-532 in backup)
+         */
+        function UltraTaskCalculator() {
+            const { passwordUnlocked } = useApp();
+            const { setUltraResult } = useCalculator();
+
+            const [formData, setFormData] = useState({
+                apiPerDay: CALCULATOR_CONSTANTS.ULTRA_TASK.DEFAULT_API_PER_DAY,
+                coverageHours: CALCULATOR_CONSTANTS.ULTRA_TASK.DEFAULT_COVERAGE_HOURS,
+                apiResponseTime: CALCULATOR_CONSTANTS.ULTRA_TASK.DEFAULT_RESPONSE_TIME,
+                peak: CALCULATOR_CONSTANTS.ULTRA_TASK.DEFAULT_PEAK
+            });
+            const [result, setResult] = useState(null);
+
+            const updateField = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const calculate = () => {
+                // CRITICAL: Preserve exact formula from original (lines 528-532)
+                const concurrentAPI = formData.apiPerDay / formData.coverageHours / 60 / 60 * (formData.peak / 100);
+                const executionNodesRequired = concurrentAPI / (100 / formData.apiResponseTime);
+                const haExecutionNodesRequired = Math.max(Math.ceil(executionNodesRequired * 1.3), 2);
+                const fmNodesRequired = concurrentAPI / (200 / formData.apiResponseTime);
+                const haFmNodesRequired = Math.max(Math.ceil(fmNodesRequired * 1.3), 2);
+
+                const calculatedResult = {
+                    concurrentAPI,
+                    executionNodesRequired,
+                    haExecutionNodesRequired,
+                    fmNodesRequired,
+                    haFmNodesRequired
+                };
+
+                setResult(calculatedResult);
+                setUltraResult(calculatedResult);
+            };
+
+            return (
+                <>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <FormField
+                            id="api-per-day-ultra"
+                            label="API requests per Day"
+                            value={formData.apiPerDay}
+                            onChange={(value) => updateField('apiPerDay', value)}
+                        />
+
+                        <FormField
+                            id="coverage-hours-ultra"
+                            label="API Usage Hours per Day"
+                            value={formData.coverageHours}
+                            onChange={(value) => updateField('coverageHours', value)}
+                        />
+
+                        <FormField
+                            id="api-response-time-ultra"
+                            label="API Response Time (seconds)"
+                            value={formData.apiResponseTime}
+                            onChange={(value) => updateField('apiResponseTime', value)}
+                            visible={passwordUnlocked}
+                        />
+
+                        <FormField
+                            id="peak-ultra"
+                            label="Peak (%)"
+                            value={formData.peak}
+                            onChange={(value) => updateField('peak', value)}
+                        />
+
+                        <Button onClick={calculate}>Calculate</Button>
+                    </form>
+
+                    {result && <ResultDisplay results={result} type="ultra" />}
+                </>
+            );
+        }
+
+        /**
+         * ScheduledTaskCalculator - Calculator for scheduled tasks
+         * Preserves exact formulas from original (lines 643-645 in backup)
+         */
+        function ScheduledTaskCalculator() {
+            const { passwordUnlocked } = useApp();
+            const { setScheduledResult } = useCalculator();
+
+            const [formData, setFormData] = useState({
+                batchSize: CALCULATOR_CONSTANTS.SCHEDULED_TASK.DEFAULT_BATCH_SIZE_GB,
+                processTime: CALCULATOR_CONSTANTS.SCHEDULED_TASK.DEFAULT_PROCESS_TIME,
+                complexityMultiplier: CALCULATOR_CONSTANTS.SCHEDULED_TASK.DEFAULT_COMPLEXITY
+            });
+            const [isBatchSize, setIsBatchSize] = useState(true); // true = GB, false = Rows
+            const [result, setResult] = useState(null);
+
+            const updateField = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const handleToggleBatchMode = (checked) => {
+                setIsBatchSize(!checked);
+                if (!checked) {
+                    // Switching to GB mode
+                    setFormData(prev => ({
+                        ...prev,
+                        batchSize: CALCULATOR_CONSTANTS.SCHEDULED_TASK.DEFAULT_BATCH_SIZE_GB
+                    }));
+                } else {
+                    // Switching to Rows mode
+                    setFormData(prev => ({
+                        ...prev,
+                        batchSize: CALCULATOR_CONSTANTS.SCHEDULED_TASK.DEFAULT_BATCH_SIZE_ROWS
+                    }));
+                }
+            };
+
+            const calculate = () => {
+                let batchSizeGB;
+                if (isBatchSize) {
+                    batchSizeGB = formData.batchSize; // In GB
+                } else {
+                    // Convert rows to GB
+                    batchSizeGB = formData.batchSize * CALCULATOR_CONSTANTS.SCHEDULED_TASK.BYTES_PER_ROW / 10000000000;
+                }
+
+                // CRITICAL: Preserve exact formula from original (lines 643-645)
+                const mbPerMinute = (batchSizeGB * 1024) / (formData.processTime * 60);
+                const nodesRequired = mbPerMinute * formData.complexityMultiplier / 300;
+                const haNodesRequired = Math.ceil(Math.max(nodesRequired * 1.3, 2));
+
+                const calculatedResult = {
+                    mbPerMinute,
+                    nodesRequired,
+                    haNodesRequired
+                };
+
+                setResult(calculatedResult);
+                setScheduledResult(calculatedResult);
+            };
+
+            const complexityOptions = [
+                { value: 1, label: 'straight pass through' },
+                { value: 1.25, label: 'few sorts/aggregations' },
+                { value: 1.5, label: 'moderate sorts/aggregations' },
+                { value: 2, label: 'many sorts/aggregations' }
+            ];
+
+            return (
+                <>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <FormField
+                            id="batch-size"
+                            label={isBatchSize ? "Batch size (GB)" : "Batch volume (Rows)"}
+                            value={formData.batchSize}
+                            onChange={(value) => updateField('batchSize', value)}
+                        />
+
+                        <Toggle
+                            id="toggle-batch-mode"
+                            label="Toggle to Batch volume (Rows)"
+                            checked={!isBatchSize}
+                            onChange={handleToggleBatchMode}
+                        />
+
+                        <FormField
+                            id="process-time"
+                            label="Available Batch Window (hours)"
+                            value={formData.processTime}
+                            onChange={(value) => updateField('processTime', value)}
+                        />
+
+                        <FormField
+                            id="complexity-multiplier"
+                            label="Transformation Complexity"
+                            type="select"
+                            value={formData.complexityMultiplier}
+                            onChange={(value) => updateField('complexityMultiplier', parseFloat(value))}
+                            options={complexityOptions}
+                            visible={passwordUnlocked}
+                        />
+
+                        <Button onClick={calculate}>Calculate</Button>
+                    </form>
+
+                    {result && <ResultDisplay results={result} type="scheduled" />}
+                </>
+            );
+        }
+
+        /**
+         * HeadlessUltraCalculator - Calculator for headless ultra tasks
+         * Preserves exact formulas from original (lines 558-587 in backup)
+         */
+        function HeadlessUltraCalculator() {
+            const { passwordUnlocked } = useApp();
+            const { setHeadlessUltraResult } = useCalculator();
+
+            const [formData, setFormData] = useState({
+                eventPerDay: CALCULATOR_CONSTANTS.HEADLESS_ULTRA.DEFAULT_EVENT_PER_DAY,
+                coverageHours: CALCULATOR_CONSTANTS.HEADLESS_ULTRA.DEFAULT_COVERAGE_HOURS,
+                eventResponseTime: CALCULATOR_CONSTANTS.HEADLESS_ULTRA.DEFAULT_RESPONSE_TIME,
+                eventSize: CALCULATOR_CONSTANTS.HEADLESS_ULTRA.DEFAULT_EVENT_SIZE,
+                peak: CALCULATOR_CONSTANTS.HEADLESS_ULTRA.DEFAULT_PEAK
+            });
+            const [isMicrobatching, setIsMicrobatching] = useState(true);
+            const [result, setResult] = useState(null);
+
+            const updateField = (field, value) => {
+                setFormData(prev => ({ ...prev, [field]: value }));
+            };
+
+            const handleToggleMicrobatching = (checked) => {
+                setIsMicrobatching(checked);
+            };
+
+            const calculate = () => {
+                const complexityMultiplier = 1; // Hard coded for now
+
+                if (isMicrobatching) {
+                    // CRITICAL: Preserve exact formula from original (lines 558-560)
+                    const concurrentEvent = formData.eventPerDay / formData.coverageHours / 60 / 60 * (formData.peak / 100);
+                    const executionNodesRequired = concurrentEvent / (100 / formData.eventResponseTime);
+                    const haExecutionNodesRequired = Math.max(Math.ceil(executionNodesRequired * 1.3), 2);
+
+                    const calculatedResult = {
+                        isMicrobatching: true,
+                        eventPerSecond: concurrentEvent,
+                        executionNodesRequired,
+                        haExecutionNodesRequired
+                    };
+
+                    setResult(calculatedResult);
+                    setHeadlessUltraResult(calculatedResult);
+                } else {
+                    // CRITICAL: Preserve exact formula from original (lines 571-577)
+                    const batchSize = (formData.eventSize * formData.eventPerDay) / 10000000000; // Convert events to GB
+                    const concurrentEvent = formData.eventPerDay / formData.coverageHours / 60 * (formData.peak / 100);
+                    const mbPerMinute = ((batchSize * 1024) / (formData.coverageHours * 60)) * (formData.peak / 100);
+                    const executionNodesRequired = mbPerMinute * complexityMultiplier / 150; // Half the throughput of scheduled tasks
+                    const haExecutionNodesRequired = Math.ceil(Math.max(executionNodesRequired * 1.3, 2));
+
+                    const calculatedResult = {
+                        isMicrobatching: false,
+                        eventPerMinute: concurrentEvent,
+                        mbPerMinute,
+                        executionNodesRequired,
+                        haExecutionNodesRequired
+                    };
+
+                    setResult(calculatedResult);
+                    setHeadlessUltraResult(calculatedResult);
+                }
+            };
+
+            return (
+                <>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <FormField
+                            id="event-per-day"
+                            label="Event per Day"
+                            value={formData.eventPerDay}
+                            onChange={(value) => updateField('eventPerDay', value)}
+                        />
+
+                        <Toggle
+                            id="event-toggle-switch"
+                            label="Use Microbatching (recommended for datawarehousing)"
+                            checked={isMicrobatching}
+                            onChange={handleToggleMicrobatching}
+                        />
+
+                        <FormField
+                            id="coverage-hours-event"
+                            label="Event Usage Hours per Day"
+                            value={formData.coverageHours}
+                            onChange={(value) => updateField('coverageHours', value)}
+                        />
+
+                        <FormField
+                            id="event-response-time"
+                            label="Event Response Time (seconds)"
+                            value={formData.eventResponseTime}
+                            onChange={(value) => updateField('eventResponseTime', value)}
+                            visible={passwordUnlocked && isMicrobatching}
+                        />
+
+                        <FormField
+                            id="event-size"
+                            label="Message Size (Bytes)"
+                            value={formData.eventSize}
+                            onChange={(value) => updateField('eventSize', value)}
+                            visible={passwordUnlocked && !isMicrobatching}
+                        />
+
+                        <FormField
+                            id="peak-event"
+                            label="Peak (%)"
+                            value={formData.peak}
+                            onChange={(value) => updateField('peak', value)}
+                        />
+
+                        <Button onClick={calculate}>Calculate</Button>
+                    </form>
+
+                    {result && <ResultDisplay results={result} type="headless" />}
+                </>
+            );
+        }
+
+        /**
+         * PasswordModal Component
+         * Modal for unlocking advanced features
+         *
+         * @param {Object} props
+         * @param {boolean} props.isOpen - Whether modal is open
+         * @param {Function} props.onClose - Close handler
+         */
+        function PasswordModal({ isOpen, onClose}) {
+            const { unlockPassword } = useApp();
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+
+            // Handle Escape key
+            useEffect(() => {
+                const handleEscape = (e) => {
+                    if (e.key === 'Escape' && isOpen) {
+                        handleClose();
+                    }
+                };
+
+                document.addEventListener('keydown', handleEscape);
+                return () => document.removeEventListener('keydown', handleEscape);
+            }, [isOpen]);
+
+            const handleClose = () => {
+                setPassword('');
+                setError('');
+                onClose();
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+
+                if (password === PASSWORD) {
+                    unlockPassword();
+                    handleClose();
+                } else {
+                    setError('Incorrect password. Please try again.');
+                }
+            };
+
+            if (!isOpen) return null;
+
+            return (
+                <>
+                    <div className="overlay" onClick={handleClose}></div>
+                    <div className="popup">
+                        <h2>Enter Password</h2>
+                        <form onSubmit={handleSubmit}>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Password"
+                                autoFocus
+                            />
+                            {error && (
+                                <p style={{ color: 'red', fontSize: '14px', marginTop: '5px' }}>
+                                    {error}
+                                </p>
+                            )}
+                            <Button type="submit">Submit</Button>
+                        </form>
+                    </div>
+                </>
+            );
+        }
+
+        // ==================== DIAGRAM TAB COMPONENTS ====================
+
+        /**
+         * MonacoEditorPane Component
+         * - Initializes Monaco Editor using AMD loader
+         * - Integrates with DiagramContext
+         * - Provides Generate JSON button
+         * - Provides Generate Diagram button
+         */
+        function MonacoEditorPane({ onGenerateDiagram }) {
+            const { generateJsonFromResults, monacoEditorInstance, setMonacoEditorInstance } = useDiagram();
+            const editorContainerRef = useRef(null);
+            const [isLoading, setIsLoading] = useState(true);
+            const [loadError, setLoadError] = useState(null);
+
+            // Initialize Monaco Editor on mount
+            useEffect(() => {
+                let isMounted = true;
+
+                const initMonaco = () => {
+                    // Check if Monaco is already loaded
+                    if (window.monaco) {
+                        createEditor();
+                        return;
+                    }
+
+                    // Configure AMD loader
+                    if (!window.require) {
+                        setLoadError('Monaco loader not found. Please check CDN.');
+                        setIsLoading(false);
+                        return;
+                    }
+
+                    window.require.config({
+                        paths: {
+                            'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.30.1/min/vs'
+                        }
+                    });
+
+                    // Load Monaco Editor
+                    window.require(['vs/editor/editor.main'], function() {
+                        if (isMounted) {
+                            createEditor();
+                        }
+                    }, function(err) {
+                        console.error('Error loading Monaco:', err);
+                        if (isMounted) {
+                            setLoadError('Failed to load Monaco Editor. Please refresh the page.');
+                            setIsLoading(false);
+                        }
+                    });
+                };
+
+                const createEditor = () => {
+                    try {
+                        const editor = window.monaco.editor.create(editorContainerRef.current, {
+                            value: '{"msg": "Click on the Generate JSON button to start"}',
+                            language: 'json',
+                            theme: 'vs-light',
+                            automaticLayout: true,
+                            minimap: { enabled: false },
+                            lineNumbers: 'on',
+                            scrollBeyondLastLine: false,
+                            wordWrap: 'on',
+                            wrappingIndent: 'indent'
+                        });
+
+                        setMonacoEditorInstance(editor);
+                        setIsLoading(false);
+                    } catch (err) {
+                        console.error('Error creating Monaco editor:', err);
+                        setLoadError('Failed to initialize Monaco Editor.');
+                        setIsLoading(false);
+                    }
+                };
+
+                // Small delay to ensure container is mounted
+                const timer = setTimeout(initMonaco, 100);
+
+                return () => {
+                    isMounted = false;
+                    clearTimeout(timer);
+                    if (monacoEditorInstance) {
+                        monacoEditorInstance.dispose();
+                    }
+                };
+            }, []);
+
+            // Handle Generate JSON button click
+            const handleGenerateJson = useCallback(() => {
+                try {
+                    generateJsonFromResults();
+                } catch (err) {
+                    console.error('Error generating JSON:', err);
+                    alert('Failed to generate JSON. Please check the console for details.');
+                }
+            }, [generateJsonFromResults]);
+
+            // Handle Generate Diagram button click
+            const handleGenerateDiagram = useCallback(() => {
+                if (!monacoEditorInstance) {
+                    alert('Monaco Editor is not ready yet. Please wait a moment and try again.');
+                    return;
+                }
+
+                const jsonValue = monacoEditorInstance.getValue();
+                if (!jsonValue || jsonValue.trim() === '') {
+                    alert('No JSON to generate diagram from. Please generate JSON first.');
+                    return;
+                }
+
+                try {
+                    // Validate JSON
+                    JSON.parse(jsonValue);
+                    onGenerateDiagram(jsonValue);
+                } catch (err) {
+                    alert('Invalid JSON. Please fix the JSON syntax and try again.');
+                }
+            }, [monacoEditorInstance, onGenerateDiagram]);
+
+            return (
+                <div className="json-input-panel">
+                    <div
+                        ref={editorContainerRef}
+                        style={{
+                            width: '100%',
+                            height: 'calc(100% - 100px)',
+                            border: '1px solid #ccc'
+                        }}
+                    />
+                    {isLoading && (
+                        <div style={{ padding: '10px', textAlign: 'center', color: '#666' }}>
+                            Loading Monaco Editor...
+                        </div>
+                    )}
+                    {loadError && (
+                        <div style={{ padding: '10px', color: 'red' }}>
+                            {loadError}
+                        </div>
+                    )}
+                    <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+                        <button
+                            onClick={handleGenerateJson}
+                            disabled={isLoading}
+                            style={{ flex: 1 }}
+                        >
+                            Generate JSON
+                        </button>
+                        <button
+                            onClick={handleGenerateDiagram}
+                            disabled={isLoading}
+                            style={{ flex: 1 }}
+                        >
+                            Generate Diagram
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        /**
+         * ExcalidrawPane Component
+         * - Full Excalidraw integration
+         * - Generates infrastructure topology diagram
+         * - Organization containers with emoji flags
+         * - Snaplex groupings (cloudplex/groundplex)
+         * - Node representations (JCC/FM)
+         * - Arrows showing FM→JCC relationships
+         */
+        function ExcalidrawPane({ jsonInput }) {
+            const excalidrawRef = useRef(null);
+            const [error, setError] = useState(null);
+            const { Excalidraw } = window.ExcalidrawLib || {};
+
+            // Generate diagram when jsonInput changes
+            useEffect(() => {
+                if (jsonInput && excalidrawRef.current) {
+                    generateDiagram();
+                }
+            }, [jsonInput]);
+
+            const generateDiagram = useCallback(() => {
+                setError(null);
+
+                if (!jsonInput || jsonInput.trim() === '') {
+                    setError("No JSON input provided");
+                    return;
+                }
+
+                try {
+                    const data = JSON.parse(jsonInput);
+
+                    const elements = [];
+                    let yOffset = 0;
+                    let maxOrgWidth = 0;
+
+                    // Function to determine the size multiplier for nodes
+                    const getNodeSize = (size) => {
+                        switch(size) {
+                            case 'l': return 1.5;
+                            case 'xl': return 2;
+                            case 'xxl': return 3;
+                            default: return 1;
+                        }
+                    };
+
+                    data.forEach((org, orgIndex) => {
+                        // Define base dimensions and spacing
+                        const snaplexBaseWidth = 350;
+                        const nodeBaseWidth = 120;
+                        const nodeBaseHeight = 70;
+                        const orgPadding = 100;
+                        const snaplexVerticalSpacing = 50;
+
+                        let maxSnaplexHeight = 0;
+                        let totalSnaplexWidth = 0;
+
+                        // Calculate dimensions for all snaplexes in the org
+                        org.Snaplex.forEach(snaplex => {
+                            const jccNodes = snaplex.nodes.filter(node => node.type === 'JCC');
+                            const fmNodes = snaplex.nodes.filter(node => node.type === 'FM');
+                            const totalNodes = snaplex.nodes.length;
+
+                            // Calculate total width needed for all nodes in this snaplex
+                            const totalNodeWidth = snaplex.nodes.reduce((total, node) => total + nodeBaseWidth * getNodeSize(node.size) + 20, 0);
+
+                            // Find the maximum height needed for JCC and FM nodes
+                            const maxJccHeight = Math.max(...jccNodes.map(node => nodeBaseHeight * getNodeSize(node.size)), nodeBaseHeight);
+                            const maxFmHeight = Math.max(...fmNodes.map(node => nodeBaseHeight * getNodeSize(node.size)), nodeBaseHeight);
+
+                            // Calculate vertical spacing based on number of nodes
+                            const verticalSpacing = 50 * (1 + Math.floor(totalNodes / 6));
+
+                            // Determine snaplex dimensions
+                            const snaplexWidth = Math.max(snaplexBaseWidth, totalNodeWidth + 40);
+                            const snaplexHeight = 200 + maxJccHeight + maxFmHeight + verticalSpacing;
+
+                            maxSnaplexHeight = Math.max(maxSnaplexHeight, snaplexHeight);
+                            totalSnaplexWidth += snaplexWidth + 50;
+                        });
+
+                        // Calculate org dimensions
+                        const orgWidth = Math.max(totalSnaplexWidth + orgPadding * 2, 1000);
+                        maxOrgWidth = Math.max(maxOrgWidth, orgWidth);
+                        const orgHeight = maxSnaplexHeight + orgPadding * 2;
+
+                        // Create org shape and text
+                        const getControlPlaneEmoji = (controlPlane) => {
+                            if (controlPlane === "US") return "🌎";
+                            if (controlPlane === "EMEA") return "🌍";
+                            return "";
+                        };
+                        const [orgShape, orgText] = createBasicShape(
+                            "rectangle",
+                            0,
+                            yOffset,
+                            orgWidth,
+                            orgHeight,
+                            `${getControlPlaneEmoji(org.ControlPlane)} ${org.ControlPlane} - ${org.OrgName}`,
+                            'org'
+                        );
+                        orgShape.backgroundColor = getOrgColor();
+                        elements.push(orgShape, orgText);
+
+                        let xOffset = orgPadding;
+                        org.Snaplex.forEach((snaplex, snaplexIndex) => {
+                            const jccNodes = snaplex.nodes.filter(node => node.type === 'JCC');
+                            const fmNodes = snaplex.nodes.filter(node => node.type === 'FM');
+                            const totalNodes = snaplex.nodes.length;
+
+                            // Calculate dimensions for this specific snaplex
+                            const totalNodeWidth = snaplex.nodes.reduce((total, node) => total + nodeBaseWidth * getNodeSize(node.size) + 20, 0);
+                            const maxJccHeight = Math.max(...jccNodes.map(node => nodeBaseHeight * getNodeSize(node.size)), nodeBaseHeight);
+                            const maxFmHeight = Math.max(...fmNodes.map(node => nodeBaseHeight * getNodeSize(node.size)), nodeBaseHeight);
+
+                            const verticalSpacing = 50 * (1 + Math.floor(totalNodes / 6));
+
+                            const currentSnaplexWidth = Math.max(snaplexBaseWidth, totalNodeWidth + 40);
+                            const currentSnaplexHeight = 200 + maxJccHeight + maxFmHeight + verticalSpacing;
+
+                            // Create snaplex shape
+                            elements.push(...createBasicShape("rectangle", xOffset, yOffset + orgPadding, currentSnaplexWidth, currentSnaplexHeight, `${snaplex.type === 'groundplex' ? '🏠' : '☁️'} ${snaplex.name}`, 'snaplex'));
+
+                            let jccXOffset = xOffset + 20;
+                            let fmXOffset = xOffset + 20;
+                            const jccYOffset = yOffset + orgPadding + 100;
+                            const fmYOffset = jccYOffset + maxJccHeight + verticalSpacing;
+
+                            // Create JCC node shapes
+                            jccNodes.forEach((node, index) => {
+                                const size = getNodeSize(node.size);
+                                elements.push(...createBasicShape(
+                                    "rectangle",
+                                    jccXOffset,
+                                    jccYOffset,
+                                    nodeBaseWidth * size,
+                                    nodeBaseHeight * size,
+                                    `🖥️ JCC`,
+                                    'node'
+                                ));
+                                jccXOffset += nodeBaseWidth * size + 20;
+                            });
+
+                            // Create FM node shapes
+                            fmNodes.forEach((node, index) => {
+                                const size = getNodeSize(node.size);
+                                elements.push(...createBasicShape(
+                                    "rectangle",
+                                    fmXOffset,
+                                    fmYOffset,
+                                    nodeBaseWidth * size,
+                                    nodeBaseHeight * size,
+                                    `🔄 FM`,
+                                    'node'
+                                ));
+                                fmXOffset += nodeBaseWidth * size + 20;
+                            });
+
+                            // Create arrows from FM to JCC nodes
+                            fmNodes.forEach((fmNode, fmIndex) => {
+                                jccNodes.forEach((jccNode, jccIndex) => {
+                                    const fmSize = getNodeSize(fmNode.size);
+                                    const jccSize = getNodeSize(jccNode.size);
+                                    const fmX = xOffset + 20 + fmIndex * (nodeBaseWidth * fmSize + 20) + nodeBaseWidth * fmSize / 2;
+                                    const fmY = fmYOffset;
+                                    const jccX = xOffset + 20 + jccIndex * (nodeBaseWidth * jccSize + 20) + nodeBaseWidth * jccSize / 2;
+                                    const jccY = jccYOffset + nodeBaseHeight * jccSize;
+                                    elements.push(createArrow(fmX, fmY, jccX, jccY));
+                                });
+                            });
+
+                            xOffset += currentSnaplexWidth + 50;
+                        });
+
+                        yOffset += orgHeight + snaplexVerticalSpacing;
+                    });
+
+                    // Update Excalidraw scene
+                    if (excalidrawRef.current) {
+                        const diagramOutput = document.querySelector('.diagram-output');
+                        const totalHeight = Math.max(...elements.map(e => e.y + e.height));
+                        const totalWidth = Math.max(...elements.map(e => e.x + e.width));
+
+                        // Calculate the zoom level based on the diagram size and available space
+                        const widthRatio = diagramOutput.offsetWidth / totalWidth;
+                        const heightRatio = diagramOutput.offsetHeight / totalHeight;
+                        const zoomLevel = Math.min(widthRatio, heightRatio, 1) * 0.7; // 70% of the calculated zoom
+
+                        // Update the Excalidraw scene with the generated elements and calculated dimensions
+                        excalidrawRef.current.updateScene({
+                            elements: elements,
+                            appState: {
+                                viewBackgroundColor: "#ffffff",
+                                width: diagramOutput.offsetWidth,
+                                height: diagramOutput.offsetHeight,
+                                scrollX: (diagramOutput.offsetWidth - totalWidth * zoomLevel) / 2,
+                                scrollY: (diagramOutput.offsetHeight - totalHeight * zoomLevel) / 2,
+                                zoom: { value: zoomLevel }
+                            }
+                        });
+                    }
+                } catch (err) {
+                    console.error("Error parsing JSON or generating diagram:", err);
+                    setError("Error: " + err.message);
+                }
+            }, [jsonInput]);
+
+            // Helper function to create basic shapes (rectangles) and text
+            function createBasicShape(type, x, y, width, height, text, shapeType = 'org') {
+                const shapeId = Math.random().toString(36).substr(2, 9);
+                const textId = Math.random().toString(36).substr(2, 9);
+
+                const shape = {
+                    id: shapeId,
+                    type,
+                    x,
+                    y,
+                    width,
+                    height,
+                    angle: 0,
+                    strokeColor: "#000000",
+                    backgroundColor: "transparent",
+                    fillStyle: "hachure",
+                    strokeWidth: 1,
+                    strokeStyle: "solid",
+                    roughness: 1,
+                    opacity: 100,
+                    groupIds: [],
+                    strokeSharpness: "sharp",
+                    seed: Math.floor(Math.random() * 1000000),
+                    version: 1,
+                    versionNonce: 0,
+                    isDeleted: false,
+                    boundElements: [{ type: "text", id: textId }],
+                    updated: Date.now(),
+                    link: null,
+                    locked: false
+                };
+
+                // Apply specific styles based on shape type
+                if (shapeType === 'snaplex' || shapeType === 'node') {
+                    shape.roundness = { type: 3 };
+                    shape.strokeStyle = "dashed";
+                    shape.fillStyle = "solid";
+                    shape.backgroundColor = "white";
+                } else if (shapeType === 'org') {
+                    shape.fillStyle = "hachure";
+                }
+
+                const textElement = {
+                    id: textId,
+                    type: "text",
+                    x: x + width / 2,
+                    y: y + 18,
+                    width: 0,
+                    height: 35,
+                    angle: 0,
+                    strokeColor: "#000000",
+                    backgroundColor: "transparent",
+                    fillStyle: "hachure",
+                    strokeWidth: 1,
+                    strokeStyle: "solid",
+                    roughness: 1,
+                    opacity: 100,
+                    groupIds: [],
+                    roundness: null,
+                    seed: Math.floor(Math.random() * 1000000),
+                    version: 1,
+                    versionNonce: 0,
+                    isDeleted: false,
+                    boundElements: null,
+                    updated: Date.now(),
+                    link: null,
+                    locked: false,
+                    text,
+                    fontSize: 28,
+                    fontFamily: 1,
+                    textAlign: "center",
+                    verticalAlign: "middle",
+                    baseline: 25,
+                    containerId: shapeId,
+                    originalText: text,
+                    lineHeight: 1.25
+                };
+
+                return [shape, textElement];
+            }
+
+            // Color-picking function for org backgrounds
+            const getOrgColor = (() => {
+                const colors = [
+                    "#C0C0C0",  // Light Gray
+                    "#B3E0FF",  // Light Blue
+                    "#A0E6E6",  // Light Turquoise
+                    "#C2B280",  // Light Taupe
+                    "#E0B0FF",  // Light Purple
+                    "#B0C4DE",  // Light Coal
+                    "#A4D3EE"   // Light Blue Bottle
+                ];
+
+                const usedColors = new Set();
+
+                return () => {
+                    if (usedColors.size === colors.length) {
+                        usedColors.clear();
+                    }
+
+                    let color;
+                    do {
+                        color = colors[Math.floor(Math.random() * colors.length)];
+                    } while (usedColors.has(color));
+
+                    usedColors.add(color);
+                    return color;
+                };
+            })();
+
+            // Helper function to create arrows
+            function createArrow(x1, y1, x2, y2) {
+                return {
+                    id: Math.random().toString(36).substr(2, 9),
+                    type: "arrow",
+                    x: x1,
+                    y: y1,
+                    width: x2 - x1,
+                    height: y2 - y1,
+                    angle: 0,
+                    strokeColor: "#000000",
+                    backgroundColor: "transparent",
+                    fillStyle: "hachure",
+                    strokeWidth: 1,
+                    strokeStyle: "solid",
+                    roughness: 1,
+                    opacity: 100,
+                    groupIds: [],
+                    strokeSharpness: "round",
+                    seed: Math.floor(Math.random() * 1000000),
+                    version: 1,
+                    versionNonce: 0,
+                    isDeleted: false,
+                    boundElements: null,
+                    updated: Date.now(),
+                    link: null,
+                    locked: false,
+                    points: [[0, 0], [x2 - x1, y2 - y1]],
+                    lastCommittedPoint: null,
+                    startBinding: null,
+                    endBinding: null,
+                    startArrowhead: null,
+                    endArrowhead: "arrow"
+                };
+            }
+
+            if (!Excalidraw) {
+                return (
+                    <div className="diagram-output" style={{ padding: '20px', color: 'red' }}>
+                        Error: Excalidraw library not loaded. Please refresh the page.
+                    </div>
+                );
+            }
+
+            return (
+                <div className="diagram-output" style={{ width: '100%', height: '100%', position: 'relative' }}>
+                    <Excalidraw
+                        ref={excalidrawRef}
+                        initialData={{
+                            elements: [],
+                            appState: { viewBackgroundColor: "#ffffff" }
+                        }}
+                    />
+                    {error && (
+                        <div style={{
+                            position: 'absolute',
+                            bottom: 10,
+                            left: 10,
+                            color: 'red',
+                            backgroundColor: 'white',
+                            padding: '10px',
+                            borderRadius: '4px',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                        }}>
+                            {error}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+        /**
+         * DiagramTab Component
+         * - Two-pane layout: Monaco on left, Excalidraw on right
+         * - Integrates MonacoEditorPane and ExcalidrawPane
+         */
+        function DiagramTab() {
+            const [jsonToDiagram, setJsonToDiagram] = useState('');
+
+            const handleGenerateDiagram = useCallback((jsonValue) => {
+                setJsonToDiagram(jsonValue);
+            }, []);
+
+            return (
+                <div className="diagramator-container">
+                    <MonacoEditorPane onGenerateDiagram={handleGenerateDiagram} />
+                    <ExcalidrawPane jsonInput={jsonToDiagram} />
+                </div>
+            );
+        }
+
         // ==================== APP COMPONENT ====================
 
         /**
@@ -384,116 +1836,86 @@
          * MainContent - Main application content
          */
         function MainContent() {
+            const { activeTab } = useApp();
+            const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+
+            const tabs = [
+                { id: 'tab1', label: 'Triggered Task' },
+                { id: 'tab2', label: 'Ultra Task' },
+                { id: 'tab3', label: 'Scheduled Task' },
+                { id: 'tab4', label: 'Headless Ultra Task' },
+                { id: 'tab5', label: 'Diagram' },
+                { id: 'tab6', label: 'FAQ' }
+            ];
+
+            const handleLogoClick = () => {
+                setIsPasswordModalOpen(true);
+            };
+
+            const handleCloseModal = () => {
+                setIsPasswordModalOpen(false);
+            };
+
             return (
                 <div className="main-container">
-                    {/* Logo */}
-                    <div className="logo">
-                        <img
-                            src="https://www.snaplogic.com/wp-content/uploads/2022/09/SL_logo_blue_web.png"
-                            alt="SnapLogic Logo"
-                        />
+                    {/* Header with Logo and Title */}
+                    <Header onLogoClick={handleLogoClick} />
+
+                    {/* Password Modal */}
+                    <PasswordModal
+                        isOpen={isPasswordModalOpen}
+                        onClose={handleCloseModal}
+                    />
+
+                    {/* Description */}
+                    <p>
+                        Use this calculator to estimate the number of nodes required for various SnapLogic tasks.
+                        The formulas are based on the{' '}
+                        <a href="https://community.snaplogic.com/t5/sigma-framework-library/snaplex-capacity-tuning-guide/td-p/23787" target="_blank" rel="noopener noreferrer">
+                            Sigma Framework Capacity Guide
+                        </a>.
+                    </p>
+
+                    {/* Tab Navigation */}
+                    <TabBar tabs={tabs} />
+
+                    {/* Tab Content - Triggered Task */}
+                    <div id="tab1" className={`tab-content ${activeTab === 'tab1' ? 'active' : ''}`}>
+                        <p>This calculator helps in sizing for triggered tasks with the assumption of an average execution time of 1 second.</p>
+                        <TriggeredTaskCalculator />
                     </div>
 
-                    {/* Title */}
-                    <h1>Node Sizing Calculator</h1>
-
-                    {/* Phase 0 Status Message */}
-                    <div style={{
-                        background: '#e8f5e9',
-                        border: '2px solid #4caf50',
-                        borderRadius: '5px',
-                        padding: '20px',
-                        margin: '20px 0',
-                        textAlign: 'center'
-                    }}>
-                        <h2 style={{ color: '#2e7d32', marginTop: 0 }}>
-                            ✓ React Migration - Phase 0 Complete
-                        </h2>
-                        <p style={{ color: '#1b5e20', marginBottom: '10px' }}>
-                            <strong>Foundation Ready</strong>
-                        </p>
-                        <div style={{
-                            textAlign: 'left',
-                            maxWidth: '600px',
-                            margin: '0 auto',
-                            fontSize: '14px',
-                            color: '#333'
-                        }}>
-                            <p><strong>✓ React 18.3.1</strong> - Upgraded from React 17</p>
-                            <p><strong>✓ AppContext</strong> - Manages activeTab, passwordUnlocked</p>
-                            <p><strong>✓ CalculatorContext</strong> - Stores calculator results</p>
-                            <p><strong>✓ DiagramContext</strong> - Manages Monaco editor and JSON generation</p>
-                            <p><strong>✓ Utility Functions</strong> - Constants and helpers ready</p>
-                            <p><strong>✓ Custom Hooks</strong> - useApp(), useCalculator(), useDiagram()</p>
-                        </div>
-                        <p style={{
-                            marginTop: '20px',
-                            fontStyle: 'italic',
-                            color: '#555'
-                        }}>
-                            Next: Phase 1 will add shared components and begin migrating calculators
-                        </p>
+                    {/* Tab Content - Ultra Task */}
+                    <div id="tab2" className={`tab-content ${activeTab === 'tab2' ? 'active' : ''}`}>
+                        <p>This calculator helps in sizing for ultra tasks with the assumption of an average execution time of 0.3 seconds.</p>
+                        <UltraTaskCalculator />
                     </div>
 
-                    {/* Architecture Verification */}
-                    <div style={{
-                        background: '#f5f5f5',
-                        border: '1px solid #ddd',
-                        borderRadius: '5px',
-                        padding: '15px',
-                        margin: '20px 0',
-                        fontSize: '14px'
-                    }}>
-                        <h3 style={{ marginTop: 0, color: '#0056b3' }}>Context Verification</h3>
-                        <ContextStatus />
+                    {/* Tab Content - Scheduled Task */}
+                    <div id="tab3" className={`tab-content ${activeTab === 'tab3' ? 'active' : ''}`}>
+                        <p>This calculator helps in sizing for scheduled tasks. Specific patterns and bulk load snaps can bring even greater performance, but this calculator provides a good average expectation.</p>
+                        <ScheduledTaskCalculator />
+                    </div>
+
+                    {/* Tab Content - Headless Ultra Task */}
+                    <div id="tab4" className={`tab-content ${activeTab === 'tab4' ? 'active' : ''}`}>
+                        <p>This calculator helps in sizing for headless ultra tasks with the assumption of an average execution time of 0.3 second. When the Microbatching option is enabled, it uses data size to calculate the node required instead.</p>
+                        <HeadlessUltraCalculator />
+                    </div>
+
+                    {/* Tab Content - Diagram */}
+                    <div id="tab5" className={`tab-content ${activeTab === 'tab5' ? 'active' : ''}`}>
+                        <DiagramTab />
+                    </div>
+
+                    {/* Tab Content - FAQ */}
+                    <div id="tab6" className={`tab-content ${activeTab === 'tab6' ? 'active' : ''}`}>
+                        <FAQTab />
                     </div>
                 </div>
             );
         }
 
-        /**
-         * ContextStatus - Display context status for verification
-         */
-        function ContextStatus() {
-            const app = useApp();
-            const calculator = useCalculator();
-            const diagram = useDiagram();
-
-            return (
-                <div style={{ fontFamily: 'monospace', fontSize: '12px' }}>
-                    <div style={{ marginBottom: '10px' }}>
-                        <strong>AppContext:</strong>
-                        <div style={{ marginLeft: '20px' }}>
-                            <div>• activeTab: {app.activeTab}</div>
-                            <div>• passwordUnlocked: {app.passwordUnlocked.toString()}</div>
-                            <div>• setActiveTab: {typeof app.setActiveTab}</div>
-                            <div>• unlockPassword: {typeof app.unlockPassword}</div>
-                        </div>
-                    </div>
-                    <div style={{ marginBottom: '10px' }}>
-                        <strong>CalculatorContext:</strong>
-                        <div style={{ marginLeft: '20px' }}>
-                            <div>• results: {JSON.stringify(calculator.results)}</div>
-                            <div>• setTriggeredResult: {typeof calculator.setTriggeredResult}</div>
-                            <div>• setUltraResult: {typeof calculator.setUltraResult}</div>
-                            <div>• setScheduledResult: {typeof calculator.setScheduledResult}</div>
-                            <div>• setHeadlessUltraResult: {typeof calculator.setHeadlessUltraResult}</div>
-                            <div>• clearAllResults: {typeof calculator.clearAllResults}</div>
-                        </div>
-                    </div>
-                    <div>
-                        <strong>DiagramContext:</strong>
-                        <div style={{ marginLeft: '20px' }}>
-                            <div>• monacoEditorInstance: {diagram.monacoEditorInstance === null ? 'null' : 'initialized'}</div>
-                            <div>• diagramJson: {diagram.diagramJson.substring(0, 50)}...</div>
-                            <div>• setMonacoEditorInstance: {typeof diagram.setMonacoEditorInstance}</div>
-                            <div>• setDiagramJson: {typeof diagram.setDiagramJson}</div>
-                            <div>• generateJsonFromResults: {typeof diagram.generateJsonFromResults}</div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
 
         // ==================== INITIALIZATION ====================
 
@@ -503,9 +1925,6 @@
         function initializeApp() {
             const root = ReactDOM.createRoot(document.getElementById('root'));
             root.render(<App />);
-            console.log('✓ React 18 App initialized');
-            console.log('✓ AppContext, CalculatorContext, DiagramContext ready');
-            console.log('✓ Phase 0 complete - Foundation ready for migration');
         }
 
         // Initialize when DOM is ready
