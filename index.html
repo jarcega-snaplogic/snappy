@@ -38,11 +38,8 @@
         <p>This calculator helps in sizing for triggered tasks with the assumption of an average execution time of 1 second.</p>
 
         <form id="calculator-form">
-            <label for="api-per-year">API requests per Year</label>
-            <input type="number" id="api-per-year" value="300000000">
-
-            <label for="coverage-days">API Usage Days per Month</label>
-            <input type="number" id="coverage-days" value="30">
+            <label for="api-per-day">API requests per Day</label>
+            <input type="number" id="api-per-day" value="833333">
 
             <label for="coverage-hours">API Usage Hours per Day</label>
             <input type="number" id="coverage-hours" value="24">
@@ -63,11 +60,8 @@
         <p>This calculator helps in sizing for ultra tasks with the assumption of an average execution time of 0.3 seconds.</p>
 
         <form id="calculator-form-ultra">
-            <label for="api-per-year-ultra">API requests per Year</label>
-            <input type="number" id="api-per-year-ultra" value="100000000">
-
-            <label for="coverage-days-ultra">API Usage Days per Month</label>
-            <input type="number" id="coverage-days-ultra" value="20">
+            <label for="api-per-day-ultra">API requests per Day</label>
+            <input type="number" id="api-per-day-ultra" value="416667">
 
             <label for="coverage-hours-ultra">API Usage Hours per Day</label>
             <input type="number" id="coverage-hours-ultra" value="12">
@@ -494,14 +488,13 @@
 
         function calculate() {
             // Get input values
-            const apiPerYear = document.getElementById('api-per-year').value;
-            const coverageDays = document.getElementById('coverage-days').value;
+            const apiPerDay = document.getElementById('api-per-day').value;
             const coverageHours = document.getElementById('coverage-hours').value;
             const peak = document.getElementById('peak').value;
             const apiExecutionTime = document.getElementById('api-response-time').value;
 
             // Perform calculations
-            const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100);
+            const concurrentAPI = apiPerDay / coverageHours / 60 / 60 * (peak / 100);
             const nodesRequired = concurrentAPI / (20 / apiExecutionTime);
             const haNodesRequired = Math.ceil(Math.max(nodesRequired * 1.3, 2));
 
@@ -526,14 +519,13 @@
 
         function calculateUltra() {
             // Get input values
-            const apiPerYear = document.getElementById('api-per-year-ultra').value;
-            const coverageDays = document.getElementById('coverage-days-ultra').value;
+            const apiPerDay = document.getElementById('api-per-day-ultra').value;
             const coverageHours = document.getElementById('coverage-hours-ultra').value;
             const peak = document.getElementById('peak-ultra').value;
             const apiExecutionTime = document.getElementById('api-response-time-ultra').value;
 
             // Perform calculations
-            const concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100);
+            const concurrentAPI = apiPerDay / coverageHours / 60 / 60 * (peak / 100);
             const nodesRequired = concurrentAPI / (100 / apiExecutionTime);
             const haNodesRequired = Math.max(Math.ceil(nodesRequired * 1.3), 2);
             const fmNodesRequired = concurrentAPI / (200 / apiExecutionTime);

@@ -49,10 +49,10 @@ No build, compilation, or installation steps required.
 
 ### Calculator Tabs (4 types)
 Each calculator follows the same pattern:
-1. **Triggered Task** (tab1): Lines 37-60, calculation at lines 495-525
-2. **Ultra Task** (tab2): Lines 62-85, calculation at lines 527-551
-3. **Scheduled Task** (tab3): Lines 87-115, calculation at lines 637-662
-4. **Headless Ultra Task** (tab4): Lines 117-148, calculation at lines 553-596
+1. **Triggered Task** (tab1): Lines 37-56, calculation at lines 489-518
+2. **Ultra Task** (tab2): Lines 58-77, calculation at lines 520-544
+3. **Scheduled Task** (tab3): Lines 79-107, calculation at lines 629-654
+4. **Headless Ultra Task** (tab4): Lines 109-140, calculation at lines 545-588
 
 **Key Calculation Pattern:**
 - User inputs → concurrent load calculation → node estimation → HA (High Availability) multiplier (1.3x, minimum 2 nodes)
@@ -93,15 +93,18 @@ When modifying these features, search for `pLocked` variable and associated disp
 
 ## Calculation Formulas Reference
 
-**Triggered Tasks** (line 504):
+**Triggered Tasks** (line 497):
 ```javascript
-concurrentAPI = apiPerYear / 12 / coverageDays / coverageHours / 60 / 60 * (peak / 100)
+concurrentAPI = apiPerDay / coverageHours / 60 / 60 * (peak / 100)
 nodesRequired = concurrentAPI / (20 / apiExecutionTime)
 ```
+Default: 833,333 API/day (equivalent to 300M/year distributed over 30 days/month)
 
-**Ultra Tasks** (line 537):
+**Ultra Tasks** (line 528):
 - Execution nodes: `concurrentAPI / (100 / apiExecutionTime)`
 - FeedMaster nodes: `concurrentAPI / (200 / apiExecutionTime)`
+- Formula: `concurrentAPI = apiPerDay / coverageHours / 60 / 60 * (peak / 100)`
+- Default: 416,667 API/day (equivalent to 100M/year distributed over 20 days/month)
 
 **Scheduled Tasks** (line 652):
 ```javascript
@@ -116,18 +119,18 @@ nodesRequired = mbPerMinute * complexityMultiplier / 300
 ## Making Changes
 
 ### Adding New Calculator Types
-1. Add new tab HTML structure following existing pattern (lines 37-148)
+1. Add new tab HTML structure following existing pattern (lines 37-140)
 2. Create calculate function following naming convention `calculate[Name]()`
 3. Wire up button onclick and result div
 4. Update `generateDiagramJson()` to scrape new results
 
 ### Modifying Formulas
 All calculation constants are inline within their respective functions. Common values:
-- **20** - Triggered task TPS per node (line 505)
-- **100** - Ultra execution TPS per node (line 537)
-- **200** - Ultra FM TPS per node (line 539)
-- **300** - Scheduled task MB/min per node (line 652)
-- **1.3** - HA multiplier (lines 506, 538, 540, 653, 585)
+- **20** - Triggered task TPS per node (line 498)
+- **100** - Ultra execution TPS per node (line 529)
+- **200** - Ultra FM TPS per node (line 531)
+- **300** - Scheduled task MB/min per node (line 644)
+- **1.3** - HA multiplier (lines 499, 530, 532, 645, 577)
 
 ### Styling the Diagram Tab
 When diagram tab is active, body gets class `diagram-tab-active` (line 330), which removes max-width constraint on main container (lines 16-20 in styles.css).
