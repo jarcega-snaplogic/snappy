@@ -407,7 +407,7 @@
             };
 
             return (
-                <>
+                <React.Fragment>
                     <label htmlFor={fieldId}>{label}</label>
                     {type === 'select' ? (
                         <select id={fieldId} value={value} onChange={handleChange}>
@@ -428,7 +428,7 @@
                             step={step}
                         />
                     )}
-                </>
+                </React.Fragment>
             );
         }
 
@@ -473,18 +473,18 @@
                     id: 'faq-1',
                     question: 'What are the nodes?',
                     answer: (
-                        <>
+                        <React.Fragment>
                             Nodes in SnapLogic are the computational units that execute integration tasks. They are responsible for running Snaplex instances, which process and route data according to the defined integration pipelines.
                             <br /><br />
                             These nodes form the backbone of SnapLogic's distributed processing architecture, allowing for scalable and efficient data integration across various sources and destinations.
-                        </>
+                        </React.Fragment>
                     )
                 },
                 {
                     id: 'faq-2',
                     question: 'What are feedmaster nodes?',
                     answer: (
-                        <>
+                        <React.Fragment>
                             Feedmaster nodes are specialized nodes in SnapLogic that play a crucial role in managing and coordinating the overall system. They have several key responsibilities:
                             <ul>
                                 <li>Task Distribution: They manage and coordinate the distribution of tasks across execution nodes.</li>
@@ -494,14 +494,14 @@
                                 <li>Cluster Management: Act as the central point of control for the SnapLogic cluster.</li>
                             </ul>
                             Feedmaster nodes are essential for maintaining the reliability and performance of a SnapLogic deployment, especially in large-scale or mission-critical environments.
-                        </>
+                        </React.Fragment>
                     )
                 },
                 {
                     id: 'faq-3',
                     question: 'Are there different sizes for nodes? Which are the available sizes?',
                     answer: (
-                        <>
+                        <React.Fragment>
                             Yes, SnapLogic offers different node sizes to accommodate varying workload requirements. The available sizes are:
                             <ul>
                                 <li>Medium</li>
@@ -510,25 +510,25 @@
                                 <li>Extra-Extra-Large (XXL)</li>
                             </ul>
                             The exact specifications for each size may vary depending on the deployment environment (cloud provider or on-premises) and can be customized based on specific needs. These different sizes allow organizations to optimize their SnapLogic deployment for different types of workloads, balancing performance and cost considerations.
-                        </>
+                        </React.Fragment>
                     )
                 },
                 {
                     id: 'faq-4',
                     question: 'Will the node sizing calculator recommend different node sizes?',
                     answer: (
-                        <>
+                        <React.Fragment>
                             The current version of this calculator provides estimates for the number of medium-sized nodes required. It does not recommend specific node sizes or a mix of different sizes. The estimates are based on general assumptions and are intended for initial planning purposes.
                             <br /><br />
                             For detailed recommendations on node sizes or a mix of different node sizes, it's best to consult with a SnapLogic representative. They can take into account your specific use case, performance requirements, data volumes, and integration complexity to provide a more tailored sizing recommendation. This may include suggestions for using different node sizes or specialized configurations to optimize your SnapLogic deployment.
-                        </>
+                        </React.Fragment>
                     )
                 },
                 {
                     id: 'faq-5',
                     question: 'What are memory optimized nodes?',
                     answer: (
-                        <>
+                        <React.Fragment>
                             Memory optimized nodes are specialized node configurations that have a higher ratio of memory to CPU. These nodes are designed for workloads that require more memory resources, such as:
                             <ul>
                                 <li>Large data transformations</li>
@@ -537,14 +537,14 @@
                                 <li>Tasks involving intensive data processing or analytics</li>
                             </ul>
                             Memory optimized nodes can significantly improve performance for memory-intensive tasks by reducing the need for disk I/O and allowing more data to be processed in memory. This can lead to faster execution times and improved overall system performance for certain types of integration workflows. When considering memory optimized nodes, it's important to assess your specific workload characteristics and consult with SnapLogic experts to determine if they would be beneficial for your use case.
-                        </>
+                        </React.Fragment>
                     )
                 },
                 {
                     id: 'faq-6',
                     question: 'Can SnapLogic be deployed with auto-scaling? How?',
                     answer: (
-                        <>
+                        <React.Fragment>
                             Yes, SnapLogic supports auto-scaling, but only when deployed with Kubernetes. This capability helps optimize resource utilization and cost efficiency while ensuring performance during peak loads.
                             <br /><br />
                             The auto-scaling setup in a Kubernetes environment typically involves:
@@ -555,14 +555,14 @@
                                 <li>Setting up appropriate monitoring and alerting to oversee the auto-scaling behavior</li>
                             </ol>
                             It's important to note that auto-scaling is not available for non-Kubernetes deployments of SnapLogic. For these deployments, manual scaling or other cloud-native scaling solutions would need to be implemented.
-                        </>
+                        </React.Fragment>
                     )
                 },
                 {
                     id: 'faq-7',
                     question: 'What are the recommended EC2 instance types? How about Azure and GCP?',
                     answer: (
-                        <>
+                        <React.Fragment>
                             The recommended instance types can vary based on specific workload requirements, but generally:
                             <br /><br />
                             <strong>For AWS EC2:</strong>
@@ -582,7 +582,7 @@
                                 <li>n1-highmem series can be considered for memory-intensive operations.</li>
                             </ul>
                             It's important to note that the optimal instance type can vary based on your specific use case, data volumes, integration complexity, and performance requirements. Factors such as network performance, storage requirements, and cost considerations also play a role in selecting the right instance types.
-                        </>
+                        </React.Fragment>
                     )
                 }
             ];
@@ -673,7 +673,7 @@
             };
 
             const renderTriggeredResults = () => (
-                <>
+                <React.Fragment>
                     <p>Concurrent API: {formatNumber(results.concurrentAPI)}</p>
                     <p>Nodes Required: {formatNumber(results.nodesRequired)}</p>
                     <p>HA Nodes Required: {Math.ceil(results.haNodesRequired)}</p>
@@ -690,44 +690,44 @@
                             {' '}for better performance.
                         </p>
                     )}
-                </>
+                </React.Fragment>
             );
 
             const renderUltraResults = () => (
-                <>
+                <React.Fragment>
                     <p>API per second: {formatNumber(results.concurrentAPI)}</p>
                     <p>Execution Nodes Required: {formatNumber(results.executionNodesRequired)}</p>
                     <p>HA Execution Nodes Required: {Math.ceil(results.haExecutionNodesRequired)}</p>
                     <p>FeedMaster Nodes Required: {formatNumber(results.fmNodesRequired)}</p>
                     <p>HA FeedMaster Nodes Required: {Math.ceil(results.haFmNodesRequired)}</p>
-                </>
+                </React.Fragment>
             );
 
             const renderScheduledResults = () => (
-                <>
+                <React.Fragment>
                     <p>MB per minute: {formatNumber(results.mbPerMinute)}</p>
                     <p>Nodes Required: {formatNumber(results.nodesRequired)}</p>
                     <p>HA Nodes Required: {Math.ceil(results.haNodesRequired)}</p>
-                </>
+                </React.Fragment>
             );
 
             const renderHeadlessResults = () => {
                 if (results.isMicrobatching) {
                     return (
-                        <>
+                        <React.Fragment>
                             <p>Event per second: {formatNumber(results.eventPerSecond)}</p>
                             <p>Execution Nodes Required: {formatNumber(results.executionNodesRequired)}</p>
                             <p>HA Execution Nodes Required: {Math.ceil(results.haExecutionNodesRequired)}</p>
-                        </>
+                        </React.Fragment>
                     );
                 } else {
                     return (
-                        <>
+                        <React.Fragment>
                             <p>Event per minute: {formatNumber(results.eventPerMinute)}</p>
                             <p>MB per minute: {formatNumber(results.mbPerMinute)}</p>
                             <p>Execution Nodes Required: {formatNumber(results.executionNodesRequired)}</p>
                             <p>HA Execution Nodes Required: {Math.ceil(results.haExecutionNodesRequired)}</p>
-                        </>
+                        </React.Fragment>
                     );
                 }
             };
@@ -777,7 +777,7 @@
          */
         function Header({ onLogoClick }) {
             return (
-                <>
+                <React.Fragment>
                     <div className="logo" onClick={onLogoClick} style={{ cursor: 'pointer' }}>
                         <img
                             src="https://www.snaplogic.com/wp-content/uploads/2022/09/SL_logo_blue_web.png"
@@ -785,7 +785,7 @@
                         />
                     </div>
                     <h1>Node Sizing Calculator</h1>
-                </>
+                </React.Fragment>
             );
         }
 
@@ -828,7 +828,7 @@
             };
 
             return (
-                <>
+                <React.Fragment>
                     <form onSubmit={(e) => e.preventDefault()}>
                         <FormField
                             id="api-per-day"
@@ -863,7 +863,7 @@
                     </form>
 
                     {result && <ResultDisplay results={result} type="triggered" />}
-                </>
+                </React.Fragment>
             );
         }
 
@@ -908,7 +908,7 @@
             };
 
             return (
-                <>
+                <React.Fragment>
                     <form onSubmit={(e) => e.preventDefault()}>
                         <FormField
                             id="api-per-day-ultra"
@@ -943,7 +943,7 @@
                     </form>
 
                     {result && <ResultDisplay results={result} type="ultra" />}
-                </>
+                </React.Fragment>
             );
         }
 
@@ -1016,7 +1016,7 @@
             ];
 
             return (
-                <>
+                <React.Fragment>
                     <form onSubmit={(e) => e.preventDefault()}>
                         <FormField
                             id="batch-size"
@@ -1053,7 +1053,7 @@
                     </form>
 
                     {result && <ResultDisplay results={result} type="scheduled" />}
-                </>
+                </React.Fragment>
             );
         }
 
@@ -1123,7 +1123,7 @@
             };
 
             return (
-                <>
+                <React.Fragment>
                     <form onSubmit={(e) => e.preventDefault()}>
                         <FormField
                             id="event-per-day"
@@ -1173,7 +1173,7 @@
                     </form>
 
                     {result && <ResultDisplay results={result} type="headless" />}
-                </>
+                </React.Fragment>
             );
         }
 
@@ -1222,7 +1222,7 @@
             if (!isOpen) return null;
 
             return (
-                <>
+                <React.Fragment>
                     <div className="overlay" onClick={handleClose}></div>
                     <div className="popup">
                         <h2>Enter Password</h2>
@@ -1242,7 +1242,7 @@
                             <Button type="submit">Submit</Button>
                         </form>
                     </div>
-                </>
+                </React.Fragment>
             );
         }
 
