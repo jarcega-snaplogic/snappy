@@ -1190,6 +1190,12 @@
             const [password, setPassword] = useState('');
             const [error, setError] = useState('');
 
+            const handleClose = useCallback(() => {
+                setPassword('');
+                setError('');
+                onClose();
+            }, [onClose]);
+
             // Handle Escape key
             useEffect(() => {
                 const handleEscape = (e) => {
@@ -1200,13 +1206,7 @@
 
                 document.addEventListener('keydown', handleEscape);
                 return () => document.removeEventListener('keydown', handleEscape);
-            }, [isOpen]);
-
-            const handleClose = () => {
-                setPassword('');
-                setError('');
-                onClose();
-            };
+            }, [isOpen, handleClose]);
 
             const handleSubmit = (e) => {
                 e.preventDefault();
@@ -1258,6 +1258,7 @@
         function MonacoEditorPane({ onGenerateDiagram }) {
             const { generateJsonFromResults, monacoEditorInstance, setMonacoEditorInstance } = useDiagram();
             const editorContainerRef = useRef(null);
+            const editorInstanceRef = useRef(null); // Local ref for cleanup
             const [isLoading, setIsLoading] = useState(true);
             const [loadError, setLoadError] = useState(null);
 
@@ -1339,6 +1340,8 @@
                             wrappingIndent: 'indent'
                         });
 
+                        // Store in both ref (for cleanup) and context (for other components)
+                        editorInstanceRef.current = editor;
                         setMonacoEditorInstance(editor);
                         setIsLoading(false);
                     } catch (err) {
@@ -1354,8 +1357,10 @@
                 return () => {
                     isMounted = false;
                     clearTimeout(timer);
-                    if (monacoEditorInstance) {
-                        monacoEditorInstance.dispose();
+                    // Use ref for cleanup to avoid stale closure
+                    if (editorInstanceRef.current) {
+                        editorInstanceRef.current.dispose();
+                        editorInstanceRef.current = null;
                     }
                 };
             }, []);
@@ -1451,7 +1456,7 @@
                 if (jsonInput && excalidrawRef.current) {
                     generateDiagram();
                 }
-            }, [jsonInput]);
+            }, [jsonInput, generateDiagram]);
 
             const generateDiagram = useCallback(() => {
                 setError(null);
