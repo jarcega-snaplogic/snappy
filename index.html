@@ -443,9 +443,14 @@
          * @param {Function} props.onToggle - Toggle handler
          */
         function FAQItem({ question, answer, isOpen, onToggle }) {
+            const handleClick = (e) => {
+                e.preventDefault();
+                onToggle();
+            };
+
             return (
                 <div className={`faq-item ${isOpen ? 'active' : ''}`}>
-                    <div className="faq-question" onClick={onToggle}>
+                    <div className="faq-question" onClick={handleClick}>
                         {question}
                     </div>
                     {isOpen && (
