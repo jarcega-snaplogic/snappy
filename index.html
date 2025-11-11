@@ -247,11 +247,11 @@
             const generateJsonFromResults = useCallback(() => {
                 const { triggered, ultra, scheduled, headlessUltra } = results;
 
-                const triggeredNodes = Math.ceil(triggered?.haNodesRequired || 0);
-                const ultraExecutionNodes = Math.ceil(ultra?.haExecutionNodesRequired || 0);
-                const ultraFMNodes = Math.ceil(ultra?.haFmNodesRequired || 0);
-                const scheduledNodes = Math.ceil(scheduled?.haNodesRequired || 0);
-                const headlessUltraNodes = Math.ceil(headlessUltra?.haExecutionNodesRequired || 0);
+                const triggeredNodes = Math.ceil((triggered && triggered.haNodesRequired) || 0);
+                const ultraExecutionNodes = Math.ceil((ultra && ultra.haExecutionNodesRequired) || 0);
+                const ultraFMNodes = Math.ceil((ultra && ultra.haFmNodesRequired) || 0);
+                const scheduledNodes = Math.ceil((scheduled && scheduled.haNodesRequired) || 0);
+                const headlessUltraNodes = Math.ceil((headlessUltra && headlessUltra.haExecutionNodesRequired) || 0);
 
                 if (triggeredNodes + ultraExecutionNodes + ultraFMNodes + scheduledNodes + headlessUltraNodes === 0) {
                     const json = {
