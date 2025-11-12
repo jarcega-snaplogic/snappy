@@ -469,9 +469,9 @@
         function FAQTab() {
             const [openFaqId, setOpenFaqId] = useState(null);
 
-            const handleToggle = (faqId) => {
-                setOpenFaqId(openFaqId === faqId ? null : faqId);
-            };
+            const handleToggle = useCallback((faqId) => {
+                setOpenFaqId((prevOpenFaqId) => prevOpenFaqId === faqId ? null : faqId);
+            }, []);
 
             const faqData = [
                 {
