@@ -12,8 +12,8 @@
     <!-- Excalidraw for diagram rendering -->
     <script src="https://unpkg.com/@excalidraw/excalidraw@0.15.2/dist/excalidraw.production.min.js"></script>
 
-    <!-- Babel Standalone for JSX transformation -->
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <!-- Babel Standalone 7 for JSX transformation (React 18 compatible) -->
+    <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
 
     <!-- Monaco Editor loader will be loaded dynamically to avoid AMD conflicts -->
 
@@ -442,11 +442,12 @@
          * @param {boolean} props.isOpen - Whether this FAQ is currently open
          * @param {Function} props.onToggle - Toggle handler
          */
-        function FAQItem({ question, answer, isOpen, onToggle }) {
-            const handleClick = (e) => {
+        function FAQItem({ question, answer, isOpen, onToggle, faqId }) {
+            const handleClick = useCallback((e) => {
                 e.preventDefault();
-                onToggle();
-            };
+                e.stopPropagation();
+                onToggle(faqId);
+            }, [onToggle, faqId]);
 
             return (
                 <div className={`faq-item ${isOpen ? 'active' : ''}`}>
@@ -598,10 +599,11 @@
                     {faqData.map(faq => (
                         <FAQItem
                             key={faq.id}
+                            faqId={faq.id}
                             question={faq.question}
                             answer={faq.answer}
                             isOpen={openFaqId === faq.id}
-                            onToggle={() => handleToggle(faq.id)}
+                            onToggle={handleToggle}
                         />
                     ))}
                 </div>
