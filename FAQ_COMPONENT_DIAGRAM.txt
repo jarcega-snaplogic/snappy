@@ -1,0 +1,125 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    FAQ TAB COMPONENT ARCHITECTURE                        ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│                              MainContent                                │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │                           TabBar                                  │  │
+│  │  [Triggered] [Ultra] [Scheduled] [Headless] [Diagram] [FAQ ✓]   │  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+│                                                                         │
+│  ┌───────────────────────────────────────────────────────────────────┐  │
+│  │              Tab Content - FAQ (tab6 active)                      │  │
+│  │  ┌─────────────────────────────────────────────────────────────┐  │  │
+│  │  │                       FAQTab Component                       │  │  │
+│  │  │  ┌────────────────────────────────────────────────────────┐  │  │  │
+│  │  │  │         Frequently Asked Questions                     │  │  │  │
+│  │  │  └────────────────────────────────────────────────────────┘  │  │  │
+│  │  │                                                              │  │  │
+│  │  │  ┌──────────────────────────────────────────────┐ ◄─┐      │  │  │
+│  │  │  │ FAQItem #1: What are the nodes?             │   │      │  │  │
+│  │  │  │ ▼ Answer: Nodes are computational units...  │   │      │  │  │
+│  │  │  └──────────────────────────────────────────────┘   │      │  │  │
+│  │  │                                                      │      │  │  │
+│  │  │  ┌──────────────────────────────────────────────┐   │      │  │  │
+│  │  │  │ FAQItem #2: What are feedmaster nodes?      │   │      │  │  │
+│  │  │  │ (collapsed)                                  │   │      │  │  │
+│  │  │  └──────────────────────────────────────────────┘   │      │  │  │
+│  │  │                                                      │      │  │  │
+│  │  │  ┌──────────────────────────────────────────────┐   │      │  │  │
+│  │  │  │ FAQItem #3: Different node sizes?           │   │      │  │  │
+│  │  │  │ (collapsed)                                  │   │      │  │  │
+│  │  │  └──────────────────────────────────────────────┘   ├─ Only ONE  │
+│  │  │                                                      │  open at   │
+│  │  │  ┌──────────────────────────────────────────────┐   │  a time!   │
+│  │  │  │ FAQItem #4: Recommend different sizes?      │   │            │
+│  │  │  │ (collapsed)                                  │   │            │
+│  │  │  └──────────────────────────────────────────────┘   │            │
+│  │  │                                                      │            │
+│  │  │  ┌──────────────────────────────────────────────┐   │            │
+│  │  │  │ FAQItem #5: Memory optimized nodes?         │   │            │
+│  │  │  │ (collapsed)                                  │   │            │
+│  │  │  └──────────────────────────────────────────────┘   │            │
+│  │  │                                                      │            │
+│  │  │  ┌──────────────────────────────────────────────┐   │            │
+│  │  │  │ FAQItem #6: Auto-scaling?                   │   │            │
+│  │  │  │ (collapsed)                                  │   │            │
+│  │  │  └──────────────────────────────────────────────┘   │            │
+│  │  │                                                      │            │
+│  │  │  ┌──────────────────────────────────────────────┐   │            │
+│  │  │  │ FAQItem #7: EC2 instance types?             │   │            │
+│  │  │  │ (collapsed)                                  │   │            │
+│  │  │  └──────────────────────────────────────────────┘ ◄─┘            │
+│  │  │                                                                   │
+│  │  └───────────────────────────────────────────────────────────────┘  │
+│  └───────────────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────┘
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                         STATE MANAGEMENT                                 ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+FAQTab Component State:
+┌─────────────────────────────────────────┐
+│ openFaqId: 'faq-1'                      │  ◄── Only ONE FAQ ID stored
+└─────────────────────────────────────────┘
+           │
+           ├─► FAQItem #1: isOpen = true   ✓ (shows answer)
+           ├─► FAQItem #2: isOpen = false  ✗ (hidden)
+           ├─► FAQItem #3: isOpen = false  ✗ (hidden)
+           ├─► FAQItem #4: isOpen = false  ✗ (hidden)
+           ├─► FAQItem #5: isOpen = false  ✗ (hidden)
+           ├─► FAQItem #6: isOpen = false  ✗ (hidden)
+           └─► FAQItem #7: isOpen = false  ✗ (hidden)
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                         USER INTERACTION FLOW                            ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+User clicks FAQ #3
+       │
+       ▼
+onToggle() called with 'faq-3'
+       │
+       ▼
+handleToggle('faq-3')
+       │
+       ▼
+setOpenFaqId('faq-3')  ◄── State changes from 'faq-1' to 'faq-3'
+       │
+       ▼
+FAQTab re-renders
+       │
+       ├─► FAQItem #1: isOpen = false  ✗ (now hidden)
+       ├─► FAQItem #2: isOpen = false  ✗ (hidden)
+       ├─► FAQItem #3: isOpen = true   ✓ (NOW SHOWS!)
+       ├─► FAQItem #4: isOpen = false  ✗ (hidden)
+       ├─► FAQItem #5: isOpen = false  ✗ (hidden)
+       ├─► FAQItem #6: isOpen = false  ✗ (hidden)
+       └─► FAQItem #7: isOpen = false  ✗ (hidden)
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                          KEY FEATURES                                    ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+✓ Accordion Behavior     Only one FAQ open at a time
+✓ Click to Toggle        Click question to expand/collapse
+✓ State Preservation     FAQ state maintained when switching tabs
+✓ Rich Content          Supports lists, paragraphs, formatting
+✓ Existing CSS          Uses .faq-item, .faq-question, .faq-answer
+✓ 7 Questions          All FAQ content preserved from original
+✓ Controlled Components React manages all state
+✓ No Side Effects      Pure components, predictable behavior
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                        IMPLEMENTATION STATUS                             ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+Phase 0: Context & Foundation        ✅ Complete
+Phase 1: Shared Components           ✅ Complete  
+Phase 2: FAQ Tab                     ✅ Complete ◄── YOU ARE HERE
+Phase 3: Calculator Components       ⏳ Next
+Phase 4: Diagram Tab                 ⏳ Pending
+Phase 5: Integration & Testing       ⏳ Pending
+

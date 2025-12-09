@@ -246,7 +246,6 @@ footer a:hover {
 /* Popup */
 
 .popup {
-    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
@@ -260,7 +259,6 @@ footer a:hover {
 }
 
 .overlay {
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -334,7 +332,6 @@ popup h2 {
 }
 
 .faq-answer {
-    display: none;
     padding: 15px 20px;
     background-color: #fff;
     border-top: 1px solid #e0e0e0;
